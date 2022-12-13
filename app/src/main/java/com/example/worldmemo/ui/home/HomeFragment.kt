@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -29,9 +30,15 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
 
         val textView: TextView = binding.textHome
+        val button:Button = binding.changeText
         homeViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
+
+        button.setOnClickListener{
+            homeViewModel.changeText()
+        }
+
         return root
     }
 

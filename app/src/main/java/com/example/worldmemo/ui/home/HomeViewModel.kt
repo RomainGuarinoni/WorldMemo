@@ -6,8 +6,21 @@ import androidx.lifecycle.ViewModel
 
 class HomeViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
-    }
-    val text: LiveData<String> = _text
+    private val _text:MutableLiveData<String> = MutableLiveData("This is the home page")
+
+ private val textArray:Array<String> = arrayOf("bonjour a tous", "cette app est incroyable", "je comprends rien a android")
+ private var currentIndex = 0
+
+ private fun incrementCurrentIndex(){
+     if(currentIndex == textArray.size -1){
+         currentIndex = 0
+     }else{
+         currentIndex++
+     }
+ }
+ fun changeText(){
+     incrementCurrentIndex()
+     _text.value = textArray[currentIndex]
+ }
+ val text: LiveData<String> = _text
 }
