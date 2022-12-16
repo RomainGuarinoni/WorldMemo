@@ -17,12 +17,50 @@ class HomeRecyclerAdapter(
     private var isSelectionMode = false
     private val selectedItems = ArrayList<AudioModel>()
 
-    class AudioViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class AudioViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+        View.OnClickListener,
+        View.OnLongClickListener {
         val countryView: TextView = itemView.findViewById(R.id.country_text)
         val sentenceView: TextView = itemView.findViewById(R.id.sentence_text)
         val translationView: TextView = itemView.findViewById(R.id.translation_text)
 
+        init {
+            itemView.setOnClickListener(this)
+            itemView.setOnLongClickListener(this)
+        }
 
+        override fun onClick(view: View) {
+            if (!isSelectionMode) return
+
+            handleAudioClick(view, adapterPosition)
+
+        }
+
+        override fun onLongClick(view: View): Boolean {
+            isSelectionMode = true
+
+            return handleAudioClick(view, adapterPosition)
+        }
+
+        private fun handleAudioClick(view: View, position: Int): Boolean {
+            val currentAudio = audios[position]
+            val cardView: CardView = view.findViewById(R.id.audio_card_view)
+
+            if (selectedItems.contains(currentAudio)) {
+                cardView.setCardBackgroundColor(Color.WHITE)
+                selectedItems.remove(currentAudio)
+            } else {
+                cardView.setCardBackgroundColor(Color.RED)
+                selectedItems.add(currentAudio)
+            }
+
+            if (selectedItems.size == 0) {
+                isSelectionMode = false
+                return false
+            }
+
+            return true
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioViewHolder {
@@ -39,8 +77,7 @@ class HomeRecyclerAdapter(
         holder.translationView.text = curAudio.translation
 
 
-
-        holder.itemView.setOnClickListener {
+        /*holder.itemView.setOnClickListener {
             if (isSelectionMode) {
                 val cardView: CardView = it.findViewById(R.id.audio_card_view)
                 val currentAudio = audios.get(position)
@@ -53,7 +90,7 @@ class HomeRecyclerAdapter(
                 }
             }
 
-        }
+        }*/
     }
 
     override fun getItemCount(): Int {
@@ -64,5 +101,6 @@ class HomeRecyclerAdapter(
         this.audios = filteredList
         notifyDataSetChanged()
     }
+
 
 }
