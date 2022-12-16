@@ -1,6 +1,7 @@
 package com.example.worldmemo.ui.home
 
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,11 +16,10 @@ class HomeRecyclerAdapter(
 ) : RecyclerView.Adapter<HomeRecyclerAdapter.AudioViewHolder>() {
 
     private var isSelectionMode = false
-    private val selectedItems = ArrayList<AudioModel>()
+    private val selectedItemsPosition = ArrayList<Int>()
 
     inner class AudioViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
-        View.OnClickListener,
-        View.OnLongClickListener {
+        View.OnClickListener, View.OnLongClickListener {
         val countryView: TextView = itemView.findViewById(R.id.country_text)
         val sentenceView: TextView = itemView.findViewById(R.id.sentence_text)
         val translationView: TextView = itemView.findViewById(R.id.translation_text)
@@ -43,18 +43,24 @@ class HomeRecyclerAdapter(
         }
 
         private fun handleAudioClick(view: View, position: Int): Boolean {
-            val currentAudio = audios[position]
             val cardView: CardView = view.findViewById(R.id.audio_card_view)
-
-            if (selectedItems.contains(currentAudio)) {
+            if (selectedItemsPosition.contains(position)) {
+                selectedItemsPosition.remove(position)
                 cardView.setCardBackgroundColor(Color.WHITE)
-                selectedItems.remove(currentAudio)
+
             } else {
+                selectedItemsPosition.add(position)
                 cardView.setCardBackgroundColor(Color.RED)
-                selectedItems.add(currentAudio)
+
             }
 
-            if (selectedItems.size == 0) {
+            Log.println(
+                Log.DEBUG,
+                "size of the selected array",
+                selectedItemsPosition.size.toString()
+            )
+
+            if (selectedItemsPosition.size == 0) {
                 isSelectionMode = false
                 return false
             }
@@ -76,21 +82,13 @@ class HomeRecyclerAdapter(
         holder.sentenceView.text = curAudio.sentence
         holder.translationView.text = curAudio.translation
 
+        val cardView: CardView = holder.itemView.findViewById(R.id.audio_card_view)
+        if (selectedItemsPosition.contains(position)) {
+            cardView.setCardBackgroundColor(Color.RED)
+        } else {
+            cardView.setCardBackgroundColor(Color.WHITE)
 
-        /*holder.itemView.setOnClickListener {
-            if (isSelectionMode) {
-                val cardView: CardView = it.findViewById(R.id.audio_card_view)
-                val currentAudio = audios.get(position)
-                if (selectedItems.contains(currentAudio)) {
-                    cardView.setCardBackgroundColor(Color.WHITE)
-                    selectedItems.remove(currentAudio)
-                } else {
-                    cardView.setCardBackgroundColor(Color.RED)
-                    selectedItems.add(currentAudio)
-                }
-            }
-
-        }*/
+        }
     }
 
     override fun getItemCount(): Int {
