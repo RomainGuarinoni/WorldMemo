@@ -16,6 +16,13 @@ class HomeRecyclerAdapter(
 ) : RecyclerView.Adapter<HomeRecyclerAdapter.AudioViewHolder>() {
 
     private var isSelectionMode = false
+
+    // We keep track to the position of the view because
+    // the recycle view always re used view so we cannot
+    // just apply change on the view during the click,
+    // otherwise it will affect other views later during
+    // the binding part. See https://stackoverflow.com/questions/55285596/changing-one-viewholder-item-also-affects-to-other-items
+    // for better understanding
     private val selectedItemsPosition = ArrayList<Int>()
 
     inner class AudioViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
@@ -55,9 +62,7 @@ class HomeRecyclerAdapter(
             }
 
             Log.println(
-                Log.DEBUG,
-                "size of the selected array",
-                selectedItemsPosition.size.toString()
+                Log.DEBUG, "size of the selected array", selectedItemsPosition.size.toString()
             )
 
             if (selectedItemsPosition.size == 0) {
