@@ -13,9 +13,11 @@ import com.example.worldmemo.R
 
 class HomeRecyclerAdapter(
     private var audios: MutableList<AudioModel>,
+    val handleSelect: HandleSelect,
 ) : RecyclerView.Adapter<HomeRecyclerAdapter.AudioViewHolder>() {
 
     private var isSelectionMode = false
+    private var selectedColor = Color.rgb(91, 149, 244)
 
     // We keep track to the position of the view because
     // the recycle view always re used view so we cannot
@@ -23,7 +25,7 @@ class HomeRecyclerAdapter(
     // otherwise it will affect other views later during
     // the binding part. See https://stackoverflow.com/questions/55285596/changing-one-viewholder-item-also-affects-to-other-items
     // for better understanding
-    private val selectedItemsPosition = ArrayList<Int>()
+    private var selectedItemsPosition = ArrayList<Int>()
 
     inner class AudioViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener, View.OnLongClickListener {
@@ -44,6 +46,9 @@ class HomeRecyclerAdapter(
         }
 
         override fun onLongClick(view: View): Boolean {
+
+            if (!isSelectionMode) handleSelect.onSelectStart()
+
             isSelectionMode = true
 
             return handleAudioClick(view, adapterPosition)
@@ -57,7 +62,7 @@ class HomeRecyclerAdapter(
 
             } else {
                 selectedItemsPosition.add(position)
-                cardView.setCardBackgroundColor(Color.RED)
+                cardView.setCardBackgroundColor(selectedColor)
 
             }
 
@@ -67,6 +72,7 @@ class HomeRecyclerAdapter(
 
             if (selectedItemsPosition.size == 0) {
                 isSelectionMode = false
+                handleSelect.onSelectEnd()
                 return false
             }
 
@@ -89,7 +95,7 @@ class HomeRecyclerAdapter(
 
         val cardView: CardView = holder.itemView.findViewById(R.id.audio_card_view)
         if (selectedItemsPosition.contains(position)) {
-            cardView.setCardBackgroundColor(Color.RED)
+            cardView.setCardBackgroundColor(selectedColor)
         } else {
             cardView.setCardBackgroundColor(Color.WHITE)
 
@@ -105,5 +111,20 @@ class HomeRecyclerAdapter(
         notifyDataSetChanged()
     }
 
+    fun deleteSelected() {
+        selectedItemsPosition.sortDescending()
+        selectedItemsPosition.forEach {
+            audios.removeAt(it)
+            notifyItemRemoved(it)
+        }
+        selectedItemsPosition = ArrayList<Int>()
+        handleSelect.onSelectEnd()
+        isSelectionMode=false
+    }
+
+    interface HandleSelect {
+        fun onSelectStart()
+        fun onSelectEnd()
+    }
 
 }
