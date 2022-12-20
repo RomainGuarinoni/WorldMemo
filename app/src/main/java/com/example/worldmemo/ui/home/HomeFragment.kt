@@ -1,6 +1,7 @@
 package com.example.worldmemo.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,6 +64,8 @@ class HomeFragment : Fragment(), HomeRecyclerAdapter.HandleSelect {
         }
 
 
+        Log.println(Log.INFO, "audio list size", "inserting data again")
+
         // Insert the data for audio list
         audioList = ArrayList<AudioModel>()
 
@@ -123,10 +126,14 @@ class HomeFragment : Fragment(), HomeRecyclerAdapter.HandleSelect {
 
         buttonLayout.visibility = View.GONE
 
+        Log.println(Log.INFO, "audio list size", audioList.size.toString())
+
+
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.println(Log.INFO, "life cycle", "Home fragment has been destroyed")
         _binding = null
     }
 
@@ -137,6 +144,10 @@ class HomeFragment : Fragment(), HomeRecyclerAdapter.HandleSelect {
         val filterLower = filter.lowercase()
 
         val filteredList = ArrayList<AudioModel>()
+
+        Log.println(Log.INFO, "audio list size", audioList.size.toString())
+
+
         audioList.forEach {
             if (it.sentence.lowercase().contains(filterLower) || it.translation.lowercase()
                     .contains(filterLower) || it.country.lowercase().contains(filterLower)
