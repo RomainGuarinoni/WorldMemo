@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.worldmemo.AudioModel
 import com.example.worldmemo.R
+import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment(), HomeRecyclerAdapter.HandleSelect {
@@ -19,29 +20,30 @@ class HomeFragment : Fragment(), HomeRecyclerAdapter.HandleSelect {
     private lateinit var audioList: ArrayList<AudioModel>
     private lateinit var adapter: HomeRecyclerAdapter
 
+    private lateinit var sqliteHelper: SQLiteHelper
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
 
         // Get the ViewModel to handle the Data of this fragment
-       /* val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)*/
+        /* val homeViewModel =
+             ViewModelProvider(this).get(HomeViewModel::class.java)*/
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // Get the UI element
+        sqliteHelper = SQLiteHelper(requireActivity())
+
+        // Get the UI views
         val searchView = binding.searchView
         val recycleView = binding.homeRecyclerView
         val buttonLayout = binding.homeDeleteButtonView
         val deleteButton = binding.homeDeleteButton
-        recycleView.layoutManager = LinearLayoutManager(context)
 
         // Remove auto focus of the searchView
         searchView.clearFocus()
@@ -58,45 +60,23 @@ class HomeFragment : Fragment(), HomeRecyclerAdapter.HandleSelect {
         })
 
         buttonLayout.visibility = View.GONE
-
-        deleteButton.setOnClickListener{
+        deleteButton.setOnClickListener {
             adapter.deleteSelected()
         }
 
 
-        Log.println(Log.INFO, "audio list size", "inserting data again")
-
         // Insert the data for audio list
         audioList = ArrayList<AudioModel>()
+        audioList.add(
+            AudioModel(
+                sentence = "Meu nome e", translation = "Mon nom est", country = "Brazil"
+            )
+        )
 
-        audioList.add(AudioModel("Meu nome e", "Mon nom est", "Brazil"))
-        audioList.add(AudioModel("what is thiss", "qu est ce aue cest ", "England"))
-        audioList.add(AudioModel("spierdalaj kurwa", "tu es le plus beau", "poland"))
-        audioList.add(AudioModel("Obuche", "reveille toi", "poland"))
-        audioList.add(AudioModel("Meu nome e", "Mon nom est", "Brazil"))
-        audioList.add(AudioModel("what is thiss", "qu est ce aue cest ", "England"))
-        audioList.add(AudioModel("spierdalaj kurwa", "tu es le plus beau", "poland"))
-        audioList.add(AudioModel("Obuche", "reveille toi", "poland"))
-        audioList.add(AudioModel("Meu nome e", "Mon nom est", "Brazil"))
-        audioList.add(AudioModel("what is thiss", "qu est ce aue cest ", "England"))
-
-        audioList.add(AudioModel("enorme dinguerie", "tu es le plus beau", "poland"))
-        audioList.add(AudioModel("Obuche", "reveille toi", "poland"))
-        audioList.add(AudioModel("Meu nome e", "Mon nom est", "Brazil"))
-        audioList.add(AudioModel("what is thiss", "qu est ce aue cest ", "England"))
-        audioList.add(AudioModel("spierdalaj kurwa", "tu es le plus beau", "poland"))
-        audioList.add(AudioModel("Obuche", "reveille toi", "poland"))
-        audioList.add(AudioModel("Meu nome e", "Mon nom est", "Brazil"))
-        audioList.add(AudioModel("what is thiss", "qu est ce aue cest ", "England"))
-        audioList.add(AudioModel("spierdalaj kurwa", "tu es le plus beau", "poland"))
-        audioList.add(AudioModel("Obuche", "reveille toi", "poland"))
-        audioList.add(AudioModel("Meu nome e", "Mon nom est", "Brazil"))
-        audioList.add(AudioModel("what is thiss", "qu est ce aue cest ", "England"))
-        audioList.add(AudioModel("spierdalaj kurwa", "tu es le plus beau", "poland"))
-        audioList.add(AudioModel("Obuche", "reveille toi", "poland"))
 
 
         adapter = HomeRecyclerAdapter(audioList, this)
+        recycleView.layoutManager = LinearLayoutManager(context)
         recycleView.adapter = adapter
 
 
@@ -109,7 +89,7 @@ class HomeFragment : Fragment(), HomeRecyclerAdapter.HandleSelect {
 
         buttonLayout.visibility = View.VISIBLE
 
-        val animation = AnimationUtils.loadAnimation(context,R.anim.slide_up)
+        val animation = AnimationUtils.loadAnimation(context, R.anim.slide_up)
 
         buttonLayout.startAnimation(animation)
 
@@ -120,7 +100,7 @@ class HomeFragment : Fragment(), HomeRecyclerAdapter.HandleSelect {
         val buttonLayout = binding.homeDeleteButtonView
 
 
-        val animation = AnimationUtils.loadAnimation(context,R.anim.slide_down)
+        val animation = AnimationUtils.loadAnimation(context, R.anim.slide_down)
 
         buttonLayout.startAnimation(animation)
 
