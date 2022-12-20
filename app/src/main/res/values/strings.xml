@@ -4,16 +4,15 @@
     <string name="title_add">Add</string>
     <string name="title_country">Country</string>
 
-    <string name="search_label">Search</string>
-    <string name="title_activity_searchable">SearchableActivity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="add_fragment_title">Select a media to add</string>
+    <string name="image">Image</string>
+    <string name="audio">Audio</string>
 
     <string name="button_delete">Delete</string>
 </resources>
