@@ -23,9 +23,13 @@
 
     <fragment
         android:id="@+id/navigation_country"
-        android:name="com.example.worldmemo.ui.country.CountryFragment"
+        android:name="com.example.worldmemo.ui.country.CountriesFragment"
         android:label="@string/title_country"
-        tools:layout="@layout/fragment_country" />
+        tools:layout="@layout/fragment_countries" >
+        <action
+            android:id="@+id/action_navigation_country_to_countryFragment"
+            app:destination="@id/countryFragment" />
+    </fragment>
     <fragment
         android:id="@+id/addAudioFragment"
         android:name="com.example.worldmemo.ui.add.AddAudioFragment"
@@ -34,5 +38,14 @@
         <action
             android:id="@+id/action_addAudioFragment_to_navigation_add"
             app:destination="@id/navigation_add" />
+    </fragment>
+    <fragment
+        android:id="@+id/countryFragment"
+        android:name="com.example.worldmemo.ui.country.CountryFragment"
+        android:label="fragment_country"
+        tools:layout="@layout/fragment_country" >
+        <argument
+            android:name="country_name"
+            app:argType="string" />
     </fragment>
 </navigation>

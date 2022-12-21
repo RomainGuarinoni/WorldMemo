@@ -1,16 +1,16 @@
 package com.example.worldmemo.ui.country
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.worldmemo.R
 
 class CountryRecycleAdapter(
-    private val country : MutableList<CountryModel>
+    private val country : MutableList<CountryModel>,
 ): RecyclerView.Adapter<CountryRecycleAdapter.CountryViewHolder>() {
 
 
@@ -22,8 +22,10 @@ class CountryRecycleAdapter(
             countryCard.setOnClickListener(this)
         }
 
-        override fun onClick(p0: View?) {
-            Log.println(Log.DEBUG, "country", "click on country")
+        override fun onClick(view: View) {
+            val countryName:String = view.findViewById<TextView?>(R.id.country_name).text.toString()
+            val action = CountriesFragmentDirections.actionNavigationCountryToCountryFragment(countryName)
+            Navigation.findNavController(view).navigate(action)
         }
     }
 
@@ -42,4 +44,6 @@ class CountryRecycleAdapter(
     override fun getItemCount(): Int {
         return country.size
     }
+
+
 }

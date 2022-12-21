@@ -4,67 +4,34 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.navigation.fragment.navArgs
+import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
-import com.example.worldmemo.databinding.FragmentCountryBinding
+
 
 class CountryFragment : Fragment() {
 
-    private var _binding: FragmentCountryBinding? = null
+    private lateinit var sqLiteHelper: SQLiteHelper
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-    private lateinit var countryList : ArrayList<CountryModel>
-    private lateinit var adapter : CountryRecycleAdapter
+    private lateinit var countryName:String
 
-    private lateinit var sqliteHelper:SQLiteHelper
+    private val args : CountryFragmentArgs by navArgs()
+
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
 
-        _binding = FragmentCountryBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        val view = inflater.inflate(R.layout.fragment_country, container, false)
 
-        // Get the UI element
-        val recycleView = binding.countryRecyclerView
-        val searchView = binding.searchView
+        sqLiteHelper=SQLiteHelper(requireActivity())
 
-        recycleView.layoutManager = GridLayoutManager(context,2)
+        countryName = args.countryName
 
-        sqliteHelper= SQLiteHelper(requireActivity())
-
-        // Remove auto focus of the searchView
-        searchView.clearFocus()
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(p0: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(filter: String?): Boolean {
-
-                //TODO filter country here
-                return true
-            }
-
-        })
-
-
-        countryList = sqliteHelper.getAllCountries()
-
-        adapter = CountryRecycleAdapter(countryList)
-        recycleView.adapter = adapter
-
-        return root
+        return view
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+
 }
