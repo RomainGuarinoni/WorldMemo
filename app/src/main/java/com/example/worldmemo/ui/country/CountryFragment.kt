@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.databinding.FragmentCountryBinding
 
 class CountryFragment : Fragment() {
@@ -18,6 +19,8 @@ class CountryFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var countryList : ArrayList<CountryModel>
     private lateinit var adapter : CountryRecycleAdapter
+
+    private lateinit var sqliteHelper:SQLiteHelper
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +37,7 @@ class CountryFragment : Fragment() {
 
         recycleView.layoutManager = GridLayoutManager(context,2)
 
+        sqliteHelper= SQLiteHelper(requireActivity())
 
         // Remove auto focus of the searchView
         searchView.clearFocus()
@@ -50,13 +54,8 @@ class CountryFragment : Fragment() {
 
         })
 
-        countryList = ArrayList<CountryModel>()
 
-        countryList.add(CountryModel("France"))
-        countryList.add(CountryModel("Brazil"))
-        countryList.add(CountryModel("Hong-Kong"))
-        countryList.add(CountryModel("Poland"))
-        countryList.add(CountryModel("Germany"))
+        countryList = sqliteHelper.getAllCountries()
 
         adapter = CountryRecycleAdapter(countryList)
         recycleView.adapter = adapter

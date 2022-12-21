@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
+import com.example.worldmemo.ui.country.CountryModel
 
 class SQLiteHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -78,11 +79,37 @@ class SQLiteHelper(context: Context) :
             cursor.close()
 
         } catch (e: Exception) {
-            Log.println(Log.ERROR, "sql get all students", "could not get the cursor")
+            Log.println(Log.ERROR, "sql get all students", "An error happened")
             e.printStackTrace()
         }
         return result
+    }
 
+    fun getAllCountries(): ArrayList<CountryModel> {
+        val result = ArrayList<CountryModel>()
+        val selectQuery = "SELECT DISTINCT $COUNTRY_COL FROM $TBL_AUDIO"
+        val db = this.readableDatabase
+        val cursor: Cursor?
+
+        try {
+            cursor = db.rawQuery(selectQuery, null)
+
+            if (cursor.moveToFirst()) {
+                do {
+                    val name: String = cursor.getString(cursor.getColumnIndex(COUNTRY_COL))
+                    result.add(
+                        CountryModel(name)
+                    )
+
+                } while (cursor.moveToNext())
+            }
+            cursor.close()
+
+        } catch (e: Exception) {
+            Log.println(Log.ERROR, "sql get all countries", "An error happened")
+            e.printStackTrace()
+        }
+        return result
     }
 
     fun deleteAudio(audio: AudioModel): Int {
