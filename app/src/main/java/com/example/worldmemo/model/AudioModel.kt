@@ -1,4 +1,4 @@
-package com.example.worldmemo
+package com.example.worldmemo.model
 
 import java.util.UUID
 

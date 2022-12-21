@@ -1,4 +1,4 @@
-package com.example.worldmemo.ui.country
+package com.example.worldmemo.model
 
 data class CountryModel(
     val name: String
