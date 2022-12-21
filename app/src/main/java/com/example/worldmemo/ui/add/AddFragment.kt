@@ -4,12 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
+import com.example.worldmemo.R
 import com.example.worldmemo.databinding.FragmentAddBinding
 
-class DashboardFragment : Fragment() {
+class AddFragment : Fragment() {
 
     private var _binding: FragmentAddBinding? = null
 
@@ -28,6 +28,17 @@ class DashboardFragment : Fragment() {
         val root: View = binding.root
 
         return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val createAudioButton = binding.addAudio
+
+        createAudioButton.setOnClickListener{
+            Navigation.findNavController(view).navigate(R.id.action_navigation_add_to_addAudioFragment)
+        }
+
     }
 
     override fun onDestroyView() {
