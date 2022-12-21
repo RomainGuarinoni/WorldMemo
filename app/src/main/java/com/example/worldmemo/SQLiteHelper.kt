@@ -5,12 +5,14 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 
 class SQLiteHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+    val FAIL_STATUS = -1
 
     companion object {
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
         private const val DATABASE_NAME = "worldmemo.db"
         private const val TBL_AUDIO = "tbl_audio"
         private const val ID_COL = "id"
@@ -21,7 +23,7 @@ class SQLiteHelper(context: Context) :
 
     override fun onCreate(db: SQLiteDatabase?) {
         val createTblAudio =
-            ("CREATE TABLE $TBL_AUDIO ($ID_COL INTEGER PRIMARY KEY, $SENTENCE_COL TEXT, $TRANSLATION_COL TEXT, $COUNTRY_COL TEXT)")
+            ("CREATE TABLE $TBL_AUDIO ($ID_COL TEXT PRIMARY KEY, $SENTENCE_COL TEXT, $TRANSLATION_COL TEXT, $COUNTRY_COL TEXT)")
 
         db?.execSQL(createTblAudio)
     }
@@ -54,24 +56,31 @@ class SQLiteHelper(context: Context) :
         try {
             cursor = db.rawQuery(selectQuery, null)
 
-            do {
-                val id: String = cursor.getString(cursor.getColumnIndex(ID_COL))
-                val sentence: String = cursor.getString(cursor.getColumnIndex(SENTENCE_COL))
-                val translation: String = cursor.getString(cursor.getColumnIndex(TRANSLATION_COL))
-                val country: String = cursor.getString(cursor.getColumnIndex(COUNTRY_COL))
+            if (cursor.moveToFirst()) {
+                do {
+                    val id: String = cursor.getString(cursor.getColumnIndex(ID_COL))
+                    val sentence: String = cursor.getString(cursor.getColumnIndex(SENTENCE_COL))
+                    val translation: String =
+                        cursor.getString(cursor.getColumnIndex(TRANSLATION_COL))
+                    val country: String = cursor.getString(cursor.getColumnIndex(COUNTRY_COL))
 
-                result.add(
-                    AudioModel(
-                        id = id, sentence = sentence, translation = translation, country = country
+                    result.add(
+                        AudioModel(
+                            id = id,
+                            sentence = sentence,
+                            translation = translation,
+                            country = country
+                        )
                     )
-                )
 
-            } while (cursor.moveToNext())
+                } while (cursor.moveToNext())
+            }
+            cursor.close()
 
         } catch (e: Exception) {
+            Log.println(Log.ERROR, "sql get all students", "could not get the cursor")
             e.printStackTrace()
         }
-
         return result
 
     }
