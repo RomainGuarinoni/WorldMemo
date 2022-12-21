@@ -13,13 +13,26 @@
 
     <fragment
         android:id="@+id/navigation_add"
-        android:name="com.example.worldmemo.ui.add.DashboardFragment"
+        android:name="com.example.worldmemo.ui.add.AddFragment"
         android:label="@string/title_add"
-        tools:layout="@layout/fragment_add" />
+        tools:layout="@layout/fragment_add" >
+        <action
+            android:id="@+id/action_navigation_add_to_addAudioFragment"
+            app:destination="@id/addAudioFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_country"
         android:name="com.example.worldmemo.ui.country.CountryFragment"
         android:label="@string/title_country"
         tools:layout="@layout/fragment_country" />
+    <fragment
+        android:id="@+id/addAudioFragment"
+        android:name="com.example.worldmemo.ui.add.AddAudioFragment"
+        android:label="Add audio"
+        tools:layout="@layout/fragment_add_audio" >
+        <action
+            android:id="@+id/action_addAudioFragment_to_navigation_add"
+            app:destination="@id/navigation_add" />
+    </fragment>
 </navigation>
