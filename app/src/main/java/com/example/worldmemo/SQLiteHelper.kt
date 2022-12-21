@@ -84,4 +84,13 @@ class SQLiteHelper(context: Context) :
         return result
 
     }
+
+    fun deleteAudio(audio: AudioModel): Int {
+        val db = this.writableDatabase
+
+        val success = db.delete(TBL_AUDIO, "id='${audio.id}'", null)
+        db.close()
+
+        return success
+    }
 }

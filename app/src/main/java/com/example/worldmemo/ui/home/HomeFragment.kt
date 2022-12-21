@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.worldmemo.AudioModel
@@ -14,7 +15,7 @@ import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.databinding.FragmentHomeBinding
 
-class HomeFragment : Fragment(), HomeRecyclerAdapter.HandleSelect {
+class HomeFragment : Fragment(), HomeRecyclerAdapter.Callbacks {
 
     private var _binding: FragmentHomeBinding? = null
     private lateinit var audioList: ArrayList<AudioModel>
@@ -105,6 +106,15 @@ class HomeFragment : Fragment(), HomeRecyclerAdapter.HandleSelect {
         Log.println(Log.INFO, "audio list size", audioList.size.toString())
 
 
+    }
+
+    override fun onDeleteAudio(audio: AudioModel) {
+        val status = sqliteHelper.deleteAudio(audio)
+
+        if (status == sqliteHelper.FAIL_STATUS) {
+            Toast.makeText(requireActivity(), "Audio could not be deleted ...", Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 
     override fun onDestroyView() {

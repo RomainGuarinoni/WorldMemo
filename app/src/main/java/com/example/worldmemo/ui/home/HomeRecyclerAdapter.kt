@@ -13,7 +13,7 @@ import com.example.worldmemo.R
 
 class HomeRecyclerAdapter(
     private var audios: MutableList<AudioModel>,
-    val handleSelect: HandleSelect,
+    val callbacks: Callbacks,
 ) : RecyclerView.Adapter<HomeRecyclerAdapter.AudioViewHolder>() {
 
     private var isSelectionMode = false
@@ -47,7 +47,7 @@ class HomeRecyclerAdapter(
 
         override fun onLongClick(view: View): Boolean {
 
-            if (!isSelectionMode) handleSelect.onSelectStart()
+            if (!isSelectionMode) callbacks.onSelectStart()
 
             isSelectionMode = true
 
@@ -72,7 +72,7 @@ class HomeRecyclerAdapter(
 
             if (selectedItemsPosition.size == 0) {
                 isSelectionMode = false
-                handleSelect.onSelectEnd()
+                callbacks.onSelectEnd()
                 return false
             }
 
@@ -114,17 +114,20 @@ class HomeRecyclerAdapter(
     fun deleteSelected() {
         selectedItemsPosition.sortDescending()
         selectedItemsPosition.forEach {
+            val audio = audios[it]
+            callbacks.onDeleteAudio(audio)
             audios.removeAt(it)
             notifyItemRemoved(it)
         }
         selectedItemsPosition = ArrayList<Int>()
-        handleSelect.onSelectEnd()
+        callbacks.onSelectEnd()
         isSelectionMode=false
     }
 
-    interface HandleSelect {
+    interface Callbacks {
         fun onSelectStart()
         fun onSelectEnd()
+        fun onDeleteAudio(audio:AudioModel)
     }
 
 }
