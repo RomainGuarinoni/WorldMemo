@@ -66,12 +66,14 @@ class HomeFragment : Fragment(), HomeRecyclerAdapter.HandleSelect {
 
 
         // Insert the data for audio list
-        audioList = ArrayList<AudioModel>()
+        /*audioList = ArrayList<AudioModel>()
         audioList.add(
             AudioModel(
                 sentence = "Meu nome e", translation = "Mon nom est", country = "Brazil"
             )
-        )
+        )*/
+        audioList = sqliteHelper.getAllAudio()
+
 
 
 
