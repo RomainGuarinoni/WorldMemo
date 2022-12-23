@@ -1,6 +1,7 @@
 package com.example.worldmemo.ui.country
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +30,10 @@ class CountryFragment : Fragment() {
         sqLiteHelper=SQLiteHelper(requireActivity())
 
         countryName = args.countryName
+
+        val audios = sqLiteHelper.getAudiosByCountry(countryName)
+
+        Log.println(Log.DEBUG, "audio of $countryName", audios.toString())
 
         return view
     }

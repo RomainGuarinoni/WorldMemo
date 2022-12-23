@@ -10,7 +10,7 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.worldmemo.AudioModel
+import com.example.worldmemo.model.AudioModel
 import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.databinding.FragmentHomeBinding

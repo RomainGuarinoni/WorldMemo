@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.worldmemo.AudioModel
+import com.example.worldmemo.model.AudioModel
 import com.example.worldmemo.R
 
 class HomeRecyclerAdapter(
@@ -127,7 +127,7 @@ class HomeRecyclerAdapter(
     interface Callbacks {
         fun onSelectStart()
         fun onSelectEnd()
-        fun onDeleteAudio(audio:AudioModel)
+        fun onDeleteAudio(audio: AudioModel)
     }
 
 }

@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
+import com.example.worldmemo.model.CountryModel
 import com.example.worldmemo.R
 
 class CountryRecycleAdapter(

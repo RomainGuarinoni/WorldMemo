@@ -6,7 +6,8 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
-import com.example.worldmemo.ui.country.CountryModel
+import com.example.worldmemo.model.AudioModel
+import com.example.worldmemo.model.CountryModel
 
 class SQLiteHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -109,6 +110,44 @@ class SQLiteHelper(context: Context) :
             Log.println(Log.ERROR, "sql get all countries", "An error happened")
             e.printStackTrace()
         }
+        return result
+    }
+
+    fun getAudiosByCountry(countryName: String): ArrayList<AudioModel> {
+        val result = ArrayList<AudioModel>()
+        val selectQuery = "SELECT * FROM $TBL_AUDIO WHERE $COUNTRY_COL = '$countryName'"
+        val db = this.readableDatabase
+        val cursor: Cursor?
+
+
+        try {
+            cursor = db.rawQuery(selectQuery, null)
+
+            if (cursor.moveToFirst()) {
+                do {
+                    val id: String = cursor.getString(cursor.getColumnIndex(ID_COL))
+                    val sentence: String = cursor.getString(cursor.getColumnIndex(SENTENCE_COL))
+                    val translation: String =
+                        cursor.getString(cursor.getColumnIndex(TRANSLATION_COL))
+                    val country: String = cursor.getString(cursor.getColumnIndex(COUNTRY_COL))
+                    result.add(
+                        AudioModel(
+                            id = id,
+                            sentence = sentence,
+                            translation = translation,
+                            country = country
+                        )
+                    )
+
+                } while (cursor.moveToNext())
+            }
+            cursor.close()
+
+        } catch (e: Exception) {
+            Log.println(Log.ERROR, "sql get all audios by country name", "An error happened")
+            e.printStackTrace()
+        }
+
         return result
     }
 

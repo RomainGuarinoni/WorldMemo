@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import com.example.worldmemo.AudioModel
+import com.example.worldmemo.model.AudioModel
 import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
 

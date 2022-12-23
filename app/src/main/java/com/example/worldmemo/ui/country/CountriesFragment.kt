@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.worldmemo.model.CountryModel
 import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.databinding.FragmentCountriesBinding
 
