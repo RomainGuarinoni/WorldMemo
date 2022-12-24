@@ -13,13 +13,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.worldmemo.model.AudioModel
 import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
+import com.example.worldmemo.adapter.AudioRecyclerAdapter
 import com.example.worldmemo.databinding.FragmentHomeBinding
 
-class HomeFragment : Fragment(), HomeRecyclerAdapter.Callbacks {
+class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
 
     private var _binding: FragmentHomeBinding? = null
     private lateinit var audioList: ArrayList<AudioModel>
-    private lateinit var adapter: HomeRecyclerAdapter
+    private lateinit var adapter: AudioRecyclerAdapter
 
     private lateinit var sqliteHelper: SQLiteHelper
 
@@ -72,7 +73,7 @@ class HomeFragment : Fragment(), HomeRecyclerAdapter.Callbacks {
 
 
 
-        adapter = HomeRecyclerAdapter(audioList, this)
+        adapter = AudioRecyclerAdapter(audioList, this)
         recycleView.layoutManager = LinearLayoutManager(context)
         recycleView.adapter = adapter
 

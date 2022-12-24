@@ -1,4 +1,4 @@
-package com.example.worldmemo.ui.country
+package com.example.worldmemo.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +9,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.worldmemo.model.CountryModel
 import com.example.worldmemo.R
+import com.example.worldmemo.ui.country.CountriesFragmentDirections
 
 class CountryRecycleAdapter(
     private val country : MutableList<CountryModel>,
@@ -25,12 +26,13 @@ class CountryRecycleAdapter(
 
         override fun onClick(view: View) {
             val countryName:String = view.findViewById<TextView?>(R.id.country_name).text.toString()
-            val action = CountriesFragmentDirections.actionNavigationCountryToCountryFragment(countryName)
+            val action =
+                CountriesFragmentDirections.actionNavigationCountryToCountryFragment(countryName)
             Navigation.findNavController(view).navigate(action)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryRecycleAdapter.CountryViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
         return CountryViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.country_view_row, parent, false)
         )

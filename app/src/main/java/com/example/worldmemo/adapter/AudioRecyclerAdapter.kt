@@ -1,4 +1,4 @@
-package com.example.worldmemo.ui.home
+package com.example.worldmemo.adapter
 
 import android.graphics.Color
 import android.util.Log
@@ -11,10 +11,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.worldmemo.model.AudioModel
 import com.example.worldmemo.R
 
-class HomeRecyclerAdapter(
+class AudioRecyclerAdapter(
     private var audios: MutableList<AudioModel>,
     val callbacks: Callbacks,
-) : RecyclerView.Adapter<HomeRecyclerAdapter.AudioViewHolder>() {
+) : RecyclerView.Adapter<AudioRecyclerAdapter.AudioViewHolder>() {
 
     private var isSelectionMode = false
     private var selectedColor = Color.rgb(91, 149, 244)
