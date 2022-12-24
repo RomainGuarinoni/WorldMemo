@@ -14,18 +14,19 @@ class SQLiteHelper(context: Context) :
     val FAIL_STATUS = -1
 
     companion object {
-        private const val DATABASE_VERSION = 2
+        private const val DATABASE_VERSION = 3
         private const val DATABASE_NAME = "worldmemo.db"
         private const val TBL_AUDIO = "tbl_audio"
         private const val ID_COL = "id"
         private const val SENTENCE_COL = "sentence"
         private const val TRANSLATION_COL = "translation"
         private const val COUNTRY_COL = "country"
+        private const val CREATED_DATE_COL = "created_date"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
         val createTblAudio =
-            ("CREATE TABLE $TBL_AUDIO ($ID_COL TEXT PRIMARY KEY, $SENTENCE_COL TEXT, $TRANSLATION_COL TEXT, $COUNTRY_COL TEXT)")
+            ("CREATE TABLE $TBL_AUDIO ($ID_COL TEXT PRIMARY KEY, $SENTENCE_COL TEXT, $TRANSLATION_COL TEXT, $COUNTRY_COL TEXT, $CREATED_DATE_COL TEXT)")
 
         db?.execSQL(createTblAudio)
     }
@@ -43,6 +44,7 @@ class SQLiteHelper(context: Context) :
         contentValues.put(SENTENCE_COL, audio.sentence)
         contentValues.put(TRANSLATION_COL, audio.translation)
         contentValues.put(COUNTRY_COL, audio.country)
+        contentValues.put(CREATED_DATE_COL, audio.createdDate)
 
         val success = db.insert(TBL_AUDIO, null, contentValues)
         db.close()
@@ -51,7 +53,7 @@ class SQLiteHelper(context: Context) :
 
     fun getAllAudio(): ArrayList<AudioModel> {
         val result = ArrayList<AudioModel>()
-        val selectQuery = "SELECT * FROM $TBL_AUDIO"
+        val selectQuery = "SELECT * FROM $TBL_AUDIO ORDER BY $CREATED_DATE_COL DESC"
         val db = this.readableDatabase
         val cursor: Cursor?
 
@@ -115,7 +117,7 @@ class SQLiteHelper(context: Context) :
 
     fun getAudiosByCountry(countryName: String): ArrayList<AudioModel> {
         val result = ArrayList<AudioModel>()
-        val selectQuery = "SELECT * FROM $TBL_AUDIO WHERE $COUNTRY_COL = '$countryName'"
+        val selectQuery = "SELECT * FROM $TBL_AUDIO WHERE $COUNTRY_COL = '$countryName' ORDER BY $CREATED_DATE_COL DESC"
         val db = this.readableDatabase
         val cursor: Cursor?
 
