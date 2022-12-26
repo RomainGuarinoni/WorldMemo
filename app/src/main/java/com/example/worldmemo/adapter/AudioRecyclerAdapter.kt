@@ -5,9 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.example.worldmemo.model.AudioModel
 import com.example.worldmemo.R
 
@@ -18,6 +20,8 @@ class AudioRecyclerAdapter(
 
     private var isSelectionMode = false
     private var selectedColor = Color.rgb(91, 149, 244)
+    private val baseUrl = "https://countryflagsapi.com/png/"
+
 
     // We keep track to the position of the view because
     // the recycle view always re used view so we cannot
@@ -32,6 +36,7 @@ class AudioRecyclerAdapter(
         val countryView: TextView = itemView.findViewById(R.id.country_text)
         val sentenceView: TextView = itemView.findViewById(R.id.sentence_text)
         val translationView: TextView = itemView.findViewById(R.id.translation_text)
+        val countryFlag:ImageView = itemView.findViewById(R.id.country_flag)
 
         init {
             itemView.setOnClickListener(this)
@@ -92,6 +97,9 @@ class AudioRecyclerAdapter(
         holder.countryView.text = curAudio.country
         holder.sentenceView.text = curAudio.sentence
         holder.translationView.text = curAudio.translation
+        holder.countryFlag.load(baseUrl + curAudio.country){
+            placeholder(R.drawable.ic_image)
+        }
 
         val cardView: CardView = holder.itemView.findViewById(R.id.audio_card_view)
         if (selectedItemsPosition.contains(position)) {

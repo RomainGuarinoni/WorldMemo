@@ -29,6 +29,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_home, R.id.navigation_add, R.id.navigation_country
             )
         )
+
+
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }

@@ -27,7 +27,6 @@
                 android:id="@+id/country_flag"
                 android:layout_width="107dp"
                 android:layout_height="68dp"
-                android:src="@drawable/flag_of_france"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
