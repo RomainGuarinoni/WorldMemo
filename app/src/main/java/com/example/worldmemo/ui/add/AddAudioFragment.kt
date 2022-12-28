@@ -7,9 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import com.example.worldmemo.model.AudioModel
 import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
+import com.example.worldmemo.model.AudioModel
 
 
 class AddAudioFragment : Fragment() {
@@ -18,7 +18,7 @@ class AddAudioFragment : Fragment() {
     private lateinit var translationInput: EditText
     private lateinit var spinner: Spinner
     private lateinit var countryInput: String
-
+    private lateinit var path: String
     private lateinit var sqLiteHelper: SQLiteHelper
 
 
@@ -80,7 +80,7 @@ class AddAudioFragment : Fragment() {
         }
 
         val audio =
-            AudioModel(sentence = sentence, translation = translation, country = countryInput)
+            AudioModel(sentence = sentence, translation = translation, country = countryInput, path = path)
 
         val status = sqLiteHelper.addAudio(audio)
 

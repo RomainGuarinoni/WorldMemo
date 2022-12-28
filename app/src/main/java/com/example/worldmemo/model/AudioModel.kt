@@ -9,6 +9,7 @@ data class AudioModel(
     val sentence: String,
     val translation: String,
     val country: String,
+    val path: String,
     val createdDate:String = getCreatedDate(),
 ) {
     companion object {
