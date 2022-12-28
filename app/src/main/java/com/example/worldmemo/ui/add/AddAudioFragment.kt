@@ -108,7 +108,7 @@ class AddAudioFragment : Fragment() {
 
         val formatter = DateTimeFormatter.ofPattern("YYYY_MM_DD_HH_MM_SS")
         val currentDate = LocalDateTime.now().format(formatter)
-        val fileName = "${currentDate}_audio.3gp"
+        val fileName = "${currentDate}_audio.aac"
 
         return "${requireActivity().filesDir.absolutePath}/$fileName"
 
@@ -120,8 +120,9 @@ class AddAudioFragment : Fragment() {
 
         recorder = MediaRecorder(requireActivity()).apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+            setAudioEncodingBitRate(16 * 44100)
             setOutputFile(path)
             try {
                 prepare()
