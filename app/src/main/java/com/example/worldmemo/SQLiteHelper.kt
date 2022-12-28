@@ -14,7 +14,7 @@ class SQLiteHelper(context: Context) :
     val FAIL_STATUS = -1
 
     companion object {
-        private const val DATABASE_VERSION = 3
+        private const val DATABASE_VERSION = 4
         private const val DATABASE_NAME = "worldmemo.db"
         private const val TBL_AUDIO = "tbl_audio"
         private const val ID_COL = "id"

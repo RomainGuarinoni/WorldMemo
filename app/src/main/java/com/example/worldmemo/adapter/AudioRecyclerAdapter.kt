@@ -1,10 +1,12 @@
 package com.example.worldmemo.adapter
 
 import android.graphics.Color
+import android.media.MediaPlayer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.worldmemo.R
 import com.example.worldmemo.model.AudioModel
+import java.io.IOException
 
 class AudioRecyclerAdapter(
     private var audios: MutableList<AudioModel>,
@@ -21,6 +24,8 @@ class AudioRecyclerAdapter(
     private var isSelectionMode = false
     private var selectedColor = Color.rgb(91, 149, 244)
     private val baseUrl = "https://countryflagsapi.com/png/"
+
+    private var player: MediaPlayer? = null
 
 
     // We keep track to the position of the view because
@@ -37,11 +42,13 @@ class AudioRecyclerAdapter(
         val sentenceView: TextView = itemView.findViewById(R.id.sentence_text)
         val translationView: TextView = itemView.findViewById(R.id.translation_text)
         val countryFlag: ImageView = itemView.findViewById(R.id.country_flag)
+        val playButton: Button = itemView.findViewById(R.id.audio_play_button)
 
         init {
             itemView.setOnClickListener(this)
             itemView.setOnLongClickListener(this)
         }
+
 
         override fun onClick(view: View) {
             if (!isSelectionMode) return
@@ -101,6 +108,7 @@ class AudioRecyclerAdapter(
         holder.countryFlag.load(baseUrl + curAudio.country) {
             placeholder(R.drawable.ic_image)
         }
+        holder.playButton.setOnClickListener { playAudio(curAudio.path) }
 
         val cardView: CardView = holder.itemView.findViewById(R.id.audio_card_view)
         if (selectedItemsPosition.contains(position)) {
@@ -131,6 +139,28 @@ class AudioRecyclerAdapter(
         selectedItemsPosition = ArrayList<Int>()
         callbacks.onSelectEnd()
         isSelectionMode = false
+    }
+
+    private fun playAudio(path: String) {
+        player?.release()
+
+        player = null
+
+        player = MediaPlayer().apply {
+            try {
+                setDataSource(path)
+                prepare()
+                start()
+                player?.release()
+                player = null
+            } catch (e: IOException) {
+                Log.println(Log.ERROR, "audio player", "failed to prepare the audio")
+                Log.println(Log.ERROR, "audio player", e.stackTraceToString())
+
+            }
+        }
+
+
     }
 
     interface Callbacks {

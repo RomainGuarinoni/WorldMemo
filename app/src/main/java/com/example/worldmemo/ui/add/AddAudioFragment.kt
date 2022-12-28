@@ -133,8 +133,7 @@ class AddAudioFragment : Fragment() {
 
             start()
 
-            Toast.makeText(requireActivity(), "Record start", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(requireActivity(), "Record start", Toast.LENGTH_SHORT).show()
 
             startRecordButton.visibility = Button.INVISIBLE
             startRecordButton.isEnabled = true
@@ -184,11 +183,9 @@ class AddAudioFragment : Fragment() {
         val success = file.delete()
 
         if (success) {
-            Toast.makeText(requireActivity(), "Record deleted", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(requireActivity(), "Record deleted", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(requireActivity(), "impossible to delete", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(requireActivity(), "impossible to delete", Toast.LENGTH_SHORT).show()
         }
 
         isAudioRecorded = false
@@ -208,11 +205,12 @@ class AddAudioFragment : Fragment() {
         val translation = translationInput.text.toString()
 
         if (sentence.isEmpty() || translation.isEmpty() || countryInput.isEmpty()) {
-            Toast.makeText(requireActivity(), "Please, enter all the fields", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireActivity(), "Please, enter all the fields", Toast.LENGTH_SHORT)
+                .show()
             return
         }
 
-        if(!isAudioRecorded) {
+        if (!isAudioRecorded) {
             Toast.makeText(requireActivity(), "PLease, record an audio", Toast.LENGTH_SHORT).show()
             return
         }
@@ -230,6 +228,13 @@ class AddAudioFragment : Fragment() {
             Toast.makeText(requireActivity(), "Audio could not be saved ...", Toast.LENGTH_SHORT)
                 .show()
         }
+
+        startRecordButton.visibility = Button.VISIBLE
+        stopRecordButton.visibility = Button.INVISIBLE
+        playRecordButton.visibility = Button.INVISIBLE
+        deleteRecordButton.visibility = Button.INVISIBLE
+
+        path = ""
 
     }
 
