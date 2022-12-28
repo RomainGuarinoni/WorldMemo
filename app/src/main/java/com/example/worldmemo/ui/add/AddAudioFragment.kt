@@ -1,5 +1,7 @@
 package com.example.worldmemo.ui.add
 
+import android.media.MediaPlayer
+import android.media.MediaRecorder
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +12,10 @@ import androidx.fragment.app.Fragment
 import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.model.AudioModel
+import java.io.File
+import java.io.IOException
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 class AddAudioFragment : Fragment() {
@@ -18,8 +24,16 @@ class AddAudioFragment : Fragment() {
     private lateinit var translationInput: EditText
     private lateinit var spinner: Spinner
     private lateinit var countryInput: String
+    private lateinit var startRecordButton: Button
+    private lateinit var stopRecordButton: Button
+    private lateinit var playRecordButton: Button
+    private lateinit var deleteRecordButton: Button
     private lateinit var path: String
     private lateinit var sqLiteHelper: SQLiteHelper
+    private var recorder: MediaRecorder? = null
+    private var player: MediaPlayer? = null
+
+    private var isAudioRecorded = false
 
 
     override fun onCreateView(
@@ -32,12 +46,19 @@ class AddAudioFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+
         sqLiteHelper = SQLiteHelper(requireActivity())
 
         sentenceInput = view.findViewById(R.id.add_country_sentence)
         translationInput = view.findViewById(R.id.add_country_translation)
 
         spinner = view.findViewById(R.id.add_country_select)
+        startRecordButton = view.findViewById(R.id.add_audio_start_record_button)
+        stopRecordButton = view.findViewById(R.id.add_audio_stop_record_button)
+        playRecordButton = view.findViewById(R.id.add_audio_play_record_button)
+        deleteRecordButton = view.findViewById(R.id.add_audio_delete_record_button)
+
 
 // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter.createFromResource(
@@ -67,7 +88,119 @@ class AddAudioFragment : Fragment() {
 
         addButton.setOnClickListener { addAudio() }
 
+        startRecordButton.setOnClickListener {
+            startRecording()
+        }
+        stopRecordButton.setOnClickListener {
+            stopRecording()
+
+        }
+        playRecordButton.setOnClickListener {
+            playAudio()
+        }
+        deleteRecordButton.setOnClickListener {
+            deleteAudio()
+        }
+
     }
+
+    private fun createAudioFile(): String {
+
+        val formatter = DateTimeFormatter.ofPattern("YYYY_MM_DD_HH_MM_SS")
+        val currentDate = LocalDateTime.now().format(formatter)
+        val fileName = "${currentDate}_audio.3gp"
+
+        return "${requireActivity().filesDir.absolutePath}/$fileName"
+
+    }
+
+    private fun startRecording() {
+
+        path = createAudioFile()
+
+        recorder = MediaRecorder(requireActivity()).apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+            setOutputFile(path)
+            try {
+                prepare()
+            } catch (e: IOException) {
+                Log.println(Log.ERROR, "audio recorder", "failed to prepare the audio")
+            }
+
+            startRecordButton.isEnabled = false
+
+            start()
+
+            Toast.makeText(requireActivity(), "Record start", Toast.LENGTH_SHORT)
+                .show()
+
+            startRecordButton.visibility = Button.INVISIBLE
+            startRecordButton.isEnabled = true
+            stopRecordButton.visibility = Button.VISIBLE
+        }
+
+
+    }
+
+    private fun stopRecording() {
+
+        recorder?.apply {
+            stop()
+            reset()
+            release()
+        }
+        recorder = null
+        isAudioRecorded = true
+
+        stopRecordButton.visibility = Button.INVISIBLE
+        playRecordButton.visibility = Button.VISIBLE
+        deleteRecordButton.visibility = Button.VISIBLE
+    }
+
+    private fun playAudio() {
+
+
+        player = MediaPlayer().apply {
+            try {
+                setDataSource(path)
+                prepare()
+                start()
+            } catch (e: IOException) {
+                Log.println(Log.ERROR, "audio player", "failed to prepare the audio")
+                Log.println(Log.ERROR, "audio player", e.stackTraceToString())
+
+            }
+        }
+
+
+    }
+
+    private fun deleteAudio() {
+
+        val file = File(path)
+
+        val success = file.delete()
+
+        if (success) {
+            Toast.makeText(requireActivity(), "Record deleted", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            Toast.makeText(requireActivity(), "impossible to delete", Toast.LENGTH_SHORT)
+                .show()
+        }
+
+        isAudioRecorded = false
+
+
+        startRecordButton.visibility = Button.VISIBLE
+        stopRecordButton.visibility = Button.INVISIBLE
+        playRecordButton.visibility = Button.INVISIBLE
+        deleteRecordButton.visibility = Button.INVISIBLE
+
+    }
+
 
     private fun addAudio() {
 
@@ -75,12 +208,18 @@ class AddAudioFragment : Fragment() {
         val translation = translationInput.text.toString()
 
         if (sentence.isEmpty() || translation.isEmpty() || countryInput.isEmpty()) {
-            Toast.makeText(requireActivity(), "Enter all the fields", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireActivity(), "Please, enter all the fields", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val audio =
-            AudioModel(sentence = sentence, translation = translation, country = countryInput, path = path)
+        if(!isAudioRecorded) {
+            Toast.makeText(requireActivity(), "PLease, record an audio", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val audio = AudioModel(
+            sentence = sentence, translation = translation, country = countryInput, path = path
+        )
 
         val status = sqLiteHelper.addAudio(audio)
 
@@ -91,6 +230,17 @@ class AddAudioFragment : Fragment() {
             Toast.makeText(requireActivity(), "Audio could not be saved ...", Toast.LENGTH_SHORT)
                 .show()
         }
+
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        player?.release()
+        recorder?.release()
+
+
+        player = null
+        recorder = null
 
     }
 

@@ -1,6 +1,9 @@
 package com.example.worldmemo
 
+import android.Manifest
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -16,6 +19,20 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class MainActivity : AppCompatActivity(), ImageLoaderFactory {
 
     private lateinit var binding: ActivityMainBinding
+
+
+
+
+    private val requestMultiplePermissions = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        permissions.entries.forEach {
+            Log.d("DEBUG", "${it.key} = ${it.value}")
+            //TODO make this better
+        }
+    }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +55,15 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+
+
+        requestMultiplePermissions.launch(
+            arrayOf(
+                Manifest.permission.RECORD_AUDIO,
+            )
+        )
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
