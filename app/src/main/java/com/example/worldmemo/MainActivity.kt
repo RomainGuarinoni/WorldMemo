@@ -1,15 +1,19 @@
 package com.example.worldmemo
 
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import coil.ImageLoader
+import coil.ImageLoaderFactory
+import coil.disk.DiskCache
+import coil.memory.MemoryCache
 import com.example.worldmemo.databinding.ActivityMainBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ImageLoaderFactory {
 
     private lateinit var binding: ActivityMainBinding
 
@@ -40,6 +44,15 @@ class MainActivity : AppCompatActivity() {
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
 
-        return  navController.navigateUp() ||super.onSupportNavigateUp()
+        return navController.navigateUp() || super.onSupportNavigateUp()
+    }
+
+    override fun newImageLoader(): ImageLoader {
+        return ImageLoader.Builder(this).memoryCache {
+                MemoryCache.Builder(this).maxSizePercent(0.25).build()
+            }.diskCache {
+                DiskCache.Builder().directory(this.cacheDir.resolve("image_cache"))
+                    .maxSizePercent(0.02).build()
+            }.build()
     }
 }

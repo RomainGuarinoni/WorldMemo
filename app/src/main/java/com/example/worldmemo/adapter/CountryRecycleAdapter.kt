@@ -1,6 +1,7 @@
 package com.example.worldmemo.adapter
 
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,9 +53,11 @@ class CountryRecycleAdapter(
 
         holder.countryName.text = curCountry.name
 
-        holder.countryFlag.load(baseUrl+curCountry.name){
+        val key = holder.countryFlag.load(baseUrl + curCountry.name) {
             placeholder(R.drawable.ic_image)
         }
+
+        Log.println(Log.DEBUG, "cache key ${curCountry.name}", key.toString())
 
 
     }

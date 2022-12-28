@@ -10,8 +10,8 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.example.worldmemo.model.AudioModel
 import com.example.worldmemo.R
+import com.example.worldmemo.model.AudioModel
 
 class AudioRecyclerAdapter(
     private var audios: MutableList<AudioModel>,
@@ -36,7 +36,7 @@ class AudioRecyclerAdapter(
         val countryView: TextView = itemView.findViewById(R.id.country_text)
         val sentenceView: TextView = itemView.findViewById(R.id.sentence_text)
         val translationView: TextView = itemView.findViewById(R.id.translation_text)
-        val countryFlag:ImageView = itemView.findViewById(R.id.country_flag)
+        val countryFlag: ImageView = itemView.findViewById(R.id.country_flag)
 
         init {
             itemView.setOnClickListener(this)
@@ -97,7 +97,8 @@ class AudioRecyclerAdapter(
         holder.countryView.text = curAudio.country
         holder.sentenceView.text = curAudio.sentence
         holder.translationView.text = curAudio.translation
-        holder.countryFlag.load(baseUrl + curAudio.country){
+
+        holder.countryFlag.load(baseUrl + curAudio.country) {
             placeholder(R.drawable.ic_image)
         }
 
@@ -129,7 +130,7 @@ class AudioRecyclerAdapter(
         }
         selectedItemsPosition = ArrayList<Int>()
         callbacks.onSelectEnd()
-        isSelectionMode=false
+        isSelectionMode = false
     }
 
     interface Callbacks {
