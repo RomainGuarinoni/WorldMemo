@@ -90,7 +90,7 @@
         android:layout_marginStart="30dp"
         android:layout_marginTop="42dp"
         android:text="@string/start_record"
-        android:drawableStart="@drawable/ic_baseline_mic_24"
+        android:drawableLeft="@drawable/ic_baseline_mic_24"
         app:layout_constraintStart_toEndOf="@+id/textView2"
         app:layout_constraintTop_toBottomOf="@+id/add_country_translation" />
 
@@ -102,8 +102,32 @@
         android:layout_marginTop="42dp"
         android:text="@string/stop_record"
         android:visibility="invisible"
-        android:drawableStart="@drawable/ic_baseline_stop_24"
+        android:drawableLeft="@drawable/ic_baseline_stop_24"
         app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/add_country_translation" />
+
+    <Button
+        android:id="@+id/add_audio_listen_record_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="42dp"
+        android:text="@string/play_record"
+        android:visibility="invisible"
+        android:drawableLeft="@drawable/ic_baseline_play_arrow_24"
+        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/add_country_translation" />
+
+    <Button
+        android:id="@+id/add_audio_delete_record_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="42dp"
+        android:text="@string/delete_record"
+        android:visibility="invisible"
+        android:drawableLeft="@drawable/ic_baseline_delete_24"
+        app:layout_constraintStart_toEndOf="@+id/add_audio_listen_record_button"
         app:layout_constraintTop_toBottomOf="@+id/add_country_translation" />
 
     <Button

@@ -19,6 +19,8 @@
     <string name="country">Country :</string>
     <string name="start_record">Record</string>
     <string name="stop_record">Stop</string>
+    <string name="play_record">Play</string>
+    <string name="delete_record">Delete</string>
     <string name="translation">Translation</string>
     <string name="add">Add</string>
 
