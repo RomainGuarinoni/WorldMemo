@@ -1,13 +1,17 @@
 package com.example.worldmemo.ui.add
 
+import android.content.Intent
 import android.media.MediaPlayer
 import android.media.MediaRecorder
+import android.net.Uri
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
@@ -29,6 +33,7 @@ class AddAudioFragment : Fragment() {
     private lateinit var playRecordButton: Button
     private lateinit var deleteRecordButton: Button
     private lateinit var path: String
+    private var uriFromIntent: Uri? = null
     private lateinit var sqLiteHelper: SQLiteHelper
     private var recorder: MediaRecorder? = null
     private var player: MediaPlayer? = null
@@ -45,6 +50,8 @@ class AddAudioFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
 
 
 
@@ -100,6 +107,30 @@ class AddAudioFragment : Fragment() {
         }
         deleteRecordButton.setOnClickListener {
             deleteAudio()
+        }
+
+        val intent = requireActivity().intent
+
+        if (intent.type != null && intent.type!!.startsWith("audio/")) {
+            (intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as? Uri)?.let {
+
+
+                Log.d("path", it.path.toString())
+                Log.d("path absolute", it.isAbsolute.toString())
+
+                if (it.path != null) {
+                    uriFromIntent = it
+
+                    isAudioRecorded=true
+
+                    startRecordButton.visibility = Button.INVISIBLE
+                    stopRecordButton.visibility = Button.INVISIBLE
+                    playRecordButton.visibility = Button.VISIBLE
+                    deleteRecordButton.visibility = Button.VISIBLE
+                }
+
+
+            }
         }
 
     }
@@ -164,7 +195,11 @@ class AddAudioFragment : Fragment() {
 
         player = MediaPlayer().apply {
             try {
-                setDataSource(path)
+                if (uriFromIntent != null) {
+                    setDataSource(requireActivity(), uriFromIntent!!)
+                } else {
+                    setDataSource(path)
+                }
                 prepare()
                 start()
             } catch (e: IOException) {
@@ -204,6 +239,7 @@ class AddAudioFragment : Fragment() {
 
         val sentence = sentenceInput.text.toString()
         val translation = translationInput.text.toString()
+        val finalUri: Uri
 
         if (sentence.isEmpty() || translation.isEmpty() || countryInput.isEmpty()) {
             Toast.makeText(requireActivity(), "Please, enter all the fields", Toast.LENGTH_SHORT)
@@ -216,8 +252,21 @@ class AddAudioFragment : Fragment() {
             return
         }
 
+        finalUri = if (uriFromIntent != null) {
+            uriFromIntent!!
+        } else {
+
+            val file = File(path)
+
+            FileProvider.getUriForFile(
+                requireActivity(),
+                requireActivity().applicationContext.packageName + ".provider",
+                file
+            )
+        }
+
         val audio = AudioModel(
-            sentence = sentence, translation = translation, country = countryInput, path = path
+            sentence = sentence, translation = translation, country = countryInput, path = finalUri.toString()
         )
 
         val status = sqLiteHelper.addAudio(audio)
@@ -236,6 +285,7 @@ class AddAudioFragment : Fragment() {
         deleteRecordButton.visibility = Button.INVISIBLE
 
         path = ""
+        uriFromIntent = null
 
     }
 
@@ -249,6 +299,7 @@ class AddAudioFragment : Fragment() {
         recorder = null
 
     }
+
 
     private fun resetForm() {
         sentenceInput.setText("")

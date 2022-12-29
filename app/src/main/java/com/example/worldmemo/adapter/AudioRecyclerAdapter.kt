@@ -165,7 +165,7 @@ class AudioRecyclerAdapter(
                 context,
                 context.applicationContext.packageName + ".provider",
                 requestFile
-            );
+            )
 
             fileUris.add(fileUri)
         }
@@ -208,7 +208,7 @@ class AudioRecyclerAdapter(
 
         player = MediaPlayer().apply {
             try {
-                setDataSource(audio.path)
+                setDataSource(context, Uri.parse(audio.path))
                 setOnCompletionListener {
                     holder.playButton.visibility = Button.VISIBLE
                     holder.stopButton.visibility = Button.INVISIBLE

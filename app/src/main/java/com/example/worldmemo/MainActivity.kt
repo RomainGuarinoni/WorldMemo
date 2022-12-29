@@ -37,6 +37,8 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -65,6 +67,12 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
                 Manifest.permission.READ_EXTERNAL_STORAGE,
             )
         )
+
+        val intent = intent
+
+        if(intent.type !=null){
+            navController.navigate(R.id.addAudioFragment)
+        }
 
     }
 
