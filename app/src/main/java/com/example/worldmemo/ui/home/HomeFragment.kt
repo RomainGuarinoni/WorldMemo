@@ -99,17 +99,7 @@ class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
 
     }
 
-    override fun onSelectOneItemOnly() {
-        val shareButton = binding.homeShareButton
 
-        shareButton.visibility = Button.VISIBLE
-    }
-
-    override fun onSelectMultipleItem() {
-        val shareButton = binding.homeShareButton
-
-        shareButton.visibility = Button.GONE
-    }
 
 
     override fun onSelectEnd() {

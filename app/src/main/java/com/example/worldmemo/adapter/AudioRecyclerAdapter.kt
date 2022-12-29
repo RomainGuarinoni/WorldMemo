@@ -76,8 +76,6 @@ class AudioRecyclerAdapter(
         private fun handleAudioClick(view: View, position: Int): Boolean {
             val cardView: CardView = view.findViewById(R.id.audio_card_view)
 
-            val previousSize = selectedItemsPosition.size
-
             if (selectedItemsPosition.contains(position)) {
                 selectedItemsPosition.remove(position)
                 cardView.setCardBackgroundColor(Color.WHITE)
@@ -91,14 +89,6 @@ class AudioRecyclerAdapter(
             Log.println(
                 Log.DEBUG, "size of the selected array", selectedItemsPosition.size.toString()
             )
-
-            if (selectedItemsPosition.size == 1) {
-                callbacks.onSelectOneItemOnly()
-            }
-
-            if (previousSize == 1 && selectedItemsPosition.size > 1) {
-                callbacks.onSelectMultipleItem()
-            }
 
             if (selectedItemsPosition.size == 0) {
                 isSelectionMode = false
@@ -163,21 +153,27 @@ class AudioRecyclerAdapter(
 
     fun shareSelected() {
 
-        val selectedAudio = audios[selectedItemsPosition[0]]
+        val fileUris: ArrayList<Uri> = ArrayList()
 
-        val requestFile = File(selectedAudio.path)
+        selectedItemsPosition.forEach {
+            val selectedAudio = audios[it]
 
-        // Use the FileProvider to get a content URI
-        val fileUri: Uri = FileProvider.getUriForFile(
-            context,
-            context.applicationContext.packageName + ".provider",
-            requestFile
-        );
+            val requestFile = File(selectedAudio.path)
 
-        val share = Intent(Intent.ACTION_SEND)
+            // Use the FileProvider to get a content URI
+            val fileUri: Uri = FileProvider.getUriForFile(
+                context,
+                context.applicationContext.packageName + ".provider",
+                requestFile
+            );
+
+            fileUris.add(fileUri)
+        }
+
+
+        val share = Intent(Intent.ACTION_SEND_MULTIPLE)
         share.type = "audio/aac"
-        share.setDataAndType(fileUri, context.contentResolver.getType(fileUri))
-        share.putExtra(Intent.EXTRA_STREAM, fileUri)
+        share.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileUris)
         share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         context.startActivity(Intent.createChooser(share, "Share Sound File"))
 
@@ -241,8 +237,6 @@ class AudioRecyclerAdapter(
 
     interface Callbacks {
         fun onSelectStart()
-        fun onSelectOneItemOnly()
-        fun onSelectMultipleItem()
         fun onSelectEnd()
         fun onDeleteAudio(audio: AudioModel)
     }

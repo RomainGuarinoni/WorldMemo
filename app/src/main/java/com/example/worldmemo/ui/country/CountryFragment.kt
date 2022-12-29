@@ -88,17 +88,7 @@ class CountryFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
 
     }
 
-    override fun onSelectOneItemOnly() {
-        val shareButton = binding.countryShareButton
 
-        shareButton.visibility=Button.VISIBLE
-    }
-
-    override fun onSelectMultipleItem() {
-        val shareButton = binding.countryShareButton
-
-        shareButton.visibility=Button.GONE
-    }
 
 
     override fun onSelectEnd() {
