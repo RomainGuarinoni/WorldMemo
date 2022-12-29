@@ -32,7 +32,7 @@ class AddAudioFragment : Fragment() {
     private lateinit var stopRecordButton: Button
     private lateinit var playRecordButton: Button
     private lateinit var deleteRecordButton: Button
-    private lateinit var path: String
+    private var path: String? = null
     private var uriFromIntent: Uri? = null
     private lateinit var sqLiteHelper: SQLiteHelper
     private var recorder: MediaRecorder? = null
@@ -121,7 +121,7 @@ class AddAudioFragment : Fragment() {
                 if (it.path != null) {
                     uriFromIntent = it
 
-                    isAudioRecorded=true
+                    isAudioRecorded = true
 
                     startRecordButton.visibility = Button.INVISIBLE
                     stopRecordButton.visibility = Button.INVISIBLE
@@ -214,14 +214,20 @@ class AddAudioFragment : Fragment() {
 
     private fun deleteAudio() {
 
-        val file = File(path)
+        if (path != null) {
+            val file = File(path)
 
-        val success = file.delete()
+            val success = file.delete()
 
-        if (success) {
-            Toast.makeText(requireActivity(), "Record deleted", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(requireActivity(), "impossible to delete", Toast.LENGTH_SHORT).show()
+            if (success) {
+                Toast.makeText(requireActivity(), "Record deleted", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireActivity(), "impossible to delete", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        if(player!=null && player!!.isPlaying){
+            player!!.stop()
         }
 
         isAudioRecorded = false
@@ -266,7 +272,10 @@ class AddAudioFragment : Fragment() {
         }
 
         val audio = AudioModel(
-            sentence = sentence, translation = translation, country = countryInput, path = finalUri.toString()
+            sentence = sentence,
+            translation = translation,
+            country = countryInput,
+            path = finalUri.toString()
         )
 
         val status = sqLiteHelper.addAudio(audio)
