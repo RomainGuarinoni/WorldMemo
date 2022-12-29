@@ -26,6 +26,8 @@ class AudioRecyclerAdapter(
     private val baseUrl = "https://countryflagsapi.com/png/"
 
     private var player: MediaPlayer? = null
+    private var curAudioPlayed: AudioModel? = null
+    private var curAudioPlayedView: AudioViewHolder? = null
 
 
     // We keep track to the position of the view because
@@ -43,6 +45,7 @@ class AudioRecyclerAdapter(
         val translationView: TextView = itemView.findViewById(R.id.translation_text)
         val countryFlag: ImageView = itemView.findViewById(R.id.country_flag)
         val playButton: Button = itemView.findViewById(R.id.audio_play_button)
+        val stopButton: Button = itemView.findViewById(R.id.audio_pause_button)
 
         init {
             itemView.setOnClickListener(this)
@@ -108,7 +111,9 @@ class AudioRecyclerAdapter(
         holder.countryFlag.load(baseUrl + curAudio.country) {
             placeholder(R.drawable.ic_image)
         }
-        holder.playButton.setOnClickListener { playAudio(curAudio.path) }
+
+        holder.playButton.setOnClickListener { playAudio(curAudio, holder) }
+        holder.stopButton.setOnClickListener { pauseAudio() }
 
         val cardView: CardView = holder.itemView.findViewById(R.id.audio_card_view)
         if (selectedItemsPosition.contains(position)) {
@@ -136,19 +141,46 @@ class AudioRecyclerAdapter(
             audios.removeAt(it)
             notifyItemRemoved(it)
         }
-        selectedItemsPosition = ArrayList<Int>()
+        selectedItemsPosition = ArrayList()
         callbacks.onSelectEnd()
         isSelectionMode = false
     }
 
-    private fun playAudio(path: String) {
+    private fun playAudio(audio: AudioModel, holder: AudioViewHolder) {
+
+        // If the player is not null and the audio is the same that the curAudioPlayed, then
+        // We just want to resume the audio
+        if (player != null && curAudioPlayed != null && audio.id == curAudioPlayed!!.id) {
+            Log.d("resume audio",audio.sentence)
+            player!!.start()
+            holder.playButton.visibility = Button.INVISIBLE
+            holder.stopButton.visibility = Button.VISIBLE
+            return
+        }
+
         player?.release()
 
         player = null
 
+        if (curAudioPlayed != null) {
+            curAudioPlayedView?.playButton?.visibility = Button.VISIBLE
+            curAudioPlayedView?.stopButton?.visibility = Button.INVISIBLE
+        }
+
+        curAudioPlayed = audio
+        curAudioPlayedView = holder
+
+        holder.playButton.visibility = Button.INVISIBLE
+        holder.stopButton.visibility = Button.VISIBLE
+
         player = MediaPlayer().apply {
             try {
-                setDataSource(path)
+                setDataSource(audio.path)
+                setOnCompletionListener {
+                    holder.playButton.visibility = Button.VISIBLE
+                    holder.stopButton.visibility = Button.INVISIBLE
+                    curAudioPlayed = null
+                }
                 prepare()
                 start()
                 player?.release()
@@ -159,8 +191,15 @@ class AudioRecyclerAdapter(
 
             }
         }
+    }
 
+    private fun pauseAudio() {
 
+        if (player != null && player!!.isPlaying) {
+            player!!.pause()
+            curAudioPlayedView?.playButton?.visibility = Button.VISIBLE
+            curAudioPlayedView?.stopButton?.visibility = Button.INVISIBLE
+        }
     }
 
     interface Callbacks {
