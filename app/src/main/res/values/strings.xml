@@ -26,6 +26,7 @@
 
 
     <string name="button_delete">Delete</string>
+    <string name="button_share">Share</string>
 
 
     <string-array name="countries_name">

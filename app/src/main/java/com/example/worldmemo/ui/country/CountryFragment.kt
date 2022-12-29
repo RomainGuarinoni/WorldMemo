@@ -1,11 +1,13 @@
 package com.example.worldmemo.ui.country
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.Button
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -68,7 +70,7 @@ class CountryFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
             adapter.deleteSelected()
         }
 
-        adapter = AudioRecyclerAdapter(audioList, this)
+        adapter = AudioRecyclerAdapter(audioList, this, requireActivity())
         recycleView.layoutManager = LinearLayoutManager(context)
         recycleView.adapter = adapter
 
@@ -85,6 +87,19 @@ class CountryFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
         buttonLayout.startAnimation(animation)
 
     }
+
+    override fun onSelectOneItemOnly() {
+        val shareButton = binding.countryShareButton
+
+        shareButton.visibility=Button.VISIBLE
+    }
+
+    override fun onSelectMultipleItem() {
+        val shareButton = binding.countryShareButton
+
+        shareButton.visibility=Button.GONE
+    }
+
 
     override fun onSelectEnd() {
 

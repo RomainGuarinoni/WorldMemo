@@ -1,20 +1,22 @@
 package com.example.worldmemo.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.Button
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.worldmemo.model.AudioModel
 import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.adapter.AudioRecyclerAdapter
 import com.example.worldmemo.databinding.FragmentHomeBinding
+import com.example.worldmemo.model.AudioModel
 
 class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
 
@@ -46,6 +48,7 @@ class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
         val recycleView = binding.homeRecyclerView
         val buttonLayout = binding.homeDeleteButtonView
         val deleteButton = binding.homeDeleteButton
+        val shareButton = binding.homeShareButton
 
         // Remove auto focus of the searchView
         searchView.clearFocus()
@@ -65,6 +68,9 @@ class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
         deleteButton.setOnClickListener {
             adapter.deleteSelected()
         }
+        shareButton.setOnClickListener {
+            adapter.shareSelected()
+        }
 
 
         // Insert the data for audio list
@@ -73,7 +79,7 @@ class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
 
 
 
-        adapter = AudioRecyclerAdapter(audioList, this)
+        adapter = AudioRecyclerAdapter(audioList, this,requireActivity())
         recycleView.layoutManager = LinearLayoutManager(context)
         recycleView.adapter = adapter
 
@@ -92,6 +98,19 @@ class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
         buttonLayout.startAnimation(animation)
 
     }
+
+    override fun onSelectOneItemOnly() {
+        val shareButton = binding.homeShareButton
+
+        shareButton.visibility = Button.VISIBLE
+    }
+
+    override fun onSelectMultipleItem() {
+        val shareButton = binding.homeShareButton
+
+        shareButton.visibility = Button.GONE
+    }
+
 
     override fun onSelectEnd() {
 

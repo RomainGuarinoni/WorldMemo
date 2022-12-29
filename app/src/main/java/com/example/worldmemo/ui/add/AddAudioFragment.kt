@@ -110,7 +110,7 @@ class AddAudioFragment : Fragment() {
         val currentDate = LocalDateTime.now().format(formatter)
         val fileName = "${currentDate}_audio.aac"
 
-        return "${requireActivity().filesDir.absolutePath}/$fileName"
+        return "${requireActivity().getExternalFilesDir(null)?.absolutePath}/$fileName"
 
     }
 
@@ -120,7 +120,7 @@ class AddAudioFragment : Fragment() {
 
         recorder = MediaRecorder(requireActivity()).apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+            setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
             setAudioEncodingBitRate(16 * 44100)
             setOutputFile(path)

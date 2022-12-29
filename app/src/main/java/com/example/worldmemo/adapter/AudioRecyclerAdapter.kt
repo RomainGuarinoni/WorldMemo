@@ -1,7 +1,10 @@
 package com.example.worldmemo.adapter
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.media.MediaPlayer
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,15 +13,16 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.worldmemo.R
 import com.example.worldmemo.model.AudioModel
+import java.io.File
 import java.io.IOException
 
 class AudioRecyclerAdapter(
-    private var audios: MutableList<AudioModel>,
-    val callbacks: Callbacks,
+    private var audios: MutableList<AudioModel>, val callbacks: Callbacks, val context: Context
 ) : RecyclerView.Adapter<AudioRecyclerAdapter.AudioViewHolder>() {
 
     private var isSelectionMode = false
@@ -71,6 +75,9 @@ class AudioRecyclerAdapter(
 
         private fun handleAudioClick(view: View, position: Int): Boolean {
             val cardView: CardView = view.findViewById(R.id.audio_card_view)
+
+            val previousSize = selectedItemsPosition.size
+
             if (selectedItemsPosition.contains(position)) {
                 selectedItemsPosition.remove(position)
                 cardView.setCardBackgroundColor(Color.WHITE)
@@ -84,6 +91,14 @@ class AudioRecyclerAdapter(
             Log.println(
                 Log.DEBUG, "size of the selected array", selectedItemsPosition.size.toString()
             )
+
+            if (selectedItemsPosition.size == 1) {
+                callbacks.onSelectOneItemOnly()
+            }
+
+            if (previousSize == 1 && selectedItemsPosition.size > 1) {
+                callbacks.onSelectMultipleItem()
+            }
 
             if (selectedItemsPosition.size == 0) {
                 isSelectionMode = false
@@ -146,12 +161,34 @@ class AudioRecyclerAdapter(
         isSelectionMode = false
     }
 
+    fun shareSelected() {
+
+        val selectedAudio = audios[selectedItemsPosition[0]]
+
+        val requestFile = File(selectedAudio.path)
+
+        // Use the FileProvider to get a content URI
+        val fileUri: Uri = FileProvider.getUriForFile(
+            context,
+            context.applicationContext.packageName + ".provider",
+            requestFile
+        );
+
+        val share = Intent(Intent.ACTION_SEND)
+        share.type = "audio/aac"
+        share.setDataAndType(fileUri, context.contentResolver.getType(fileUri))
+        share.putExtra(Intent.EXTRA_STREAM, fileUri)
+        share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        context.startActivity(Intent.createChooser(share, "Share Sound File"))
+
+    }
+
     private fun playAudio(audio: AudioModel, holder: AudioViewHolder) {
 
         // If the player is not null and the audio is the same that the curAudioPlayed, then
         // We just want to resume the audio
         if (player != null && curAudioPlayed != null && audio.id == curAudioPlayed!!.id) {
-            Log.d("resume audio",audio.sentence)
+            Log.d("resume audio", audio.sentence)
             player!!.start()
             holder.playButton.visibility = Button.INVISIBLE
             holder.stopButton.visibility = Button.VISIBLE
@@ -204,6 +241,8 @@ class AudioRecyclerAdapter(
 
     interface Callbacks {
         fun onSelectStart()
+        fun onSelectOneItemOnly()
+        fun onSelectMultipleItem()
         fun onSelectEnd()
         fun onDeleteAudio(audio: AudioModel)
     }

@@ -61,6 +61,8 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
         requestMultiplePermissions.launch(
             arrayOf(
                 Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
             )
         )
 
