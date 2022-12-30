@@ -40,6 +40,28 @@ class AddAudioFragment : Fragment() {
 
     private var isAudioRecorded = false
 
+    private var PATH_KEY = "path"
+    private var PATH_IS_AUDIO_RECORDED = "isAudioRecorded"
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putString(PATH_KEY, path)
+        outState.putBoolean(PATH_IS_AUDIO_RECORDED, isAudioRecorded)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        path = savedInstanceState?.getString(PATH_KEY) ?: ""
+        isAudioRecorded = savedInstanceState?.getBoolean(PATH_IS_AUDIO_RECORDED) ?:false
+
+        if(isAudioRecorded){
+            startRecordButton.visibility = Button.INVISIBLE
+            stopRecordButton.visibility = Button.INVISIBLE
+            playRecordButton.visibility = Button.VISIBLE
+            deleteRecordButton.visibility = Button.VISIBLE
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
