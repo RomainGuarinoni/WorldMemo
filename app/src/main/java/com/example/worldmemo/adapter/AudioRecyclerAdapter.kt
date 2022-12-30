@@ -208,7 +208,7 @@ class AudioRecyclerAdapter(
 
         player = MediaPlayer().apply {
             try {
-                setDataSource(context, Uri.parse(audio.path))
+                setDataSource(audio.path)
                 setOnCompletionListener {
                     holder.playButton.visibility = Button.VISIBLE
                     holder.stopButton.visibility = Button.INVISIBLE
