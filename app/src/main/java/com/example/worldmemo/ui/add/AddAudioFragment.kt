@@ -51,23 +51,20 @@ class AddAudioFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
-
-
         sqLiteHelper = SQLiteHelper(requireActivity())
 
+        // Get UI element
         sentenceInput = view.findViewById(R.id.add_country_sentence)
         translationInput = view.findViewById(R.id.add_country_translation)
-
         spinner = view.findViewById(R.id.add_country_select)
         startRecordButton = view.findViewById(R.id.add_audio_start_record_button)
         stopRecordButton = view.findViewById(R.id.add_audio_stop_record_button)
         playRecordButton = view.findViewById(R.id.add_audio_play_record_button)
         deleteRecordButton = view.findViewById(R.id.add_audio_delete_record_button)
+        val addButton: Button = view.findViewById(R.id.add_country_button)
 
 
-// Create an ArrayAdapter using the string array and a default spinner layout
+        // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter.createFromResource(
             requireActivity(), R.array.countries_name, android.R.layout.simple_spinner_item
         ).also { adapter ->
@@ -91,7 +88,6 @@ class AddAudioFragment : Fragment() {
 
         }
 
-        val addButton: Button = view.findViewById(R.id.add_country_button)
 
         addButton.setOnClickListener { addAudio() }
 
@@ -109,13 +105,11 @@ class AddAudioFragment : Fragment() {
             deleteAudio()
         }
 
+        // Handle a possible intent
         val intent = requireActivity().intent
 
         if (intent.type != null && intent.type!!.startsWith("audio/")) {
             (intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as? Uri)?.let {
-
-
-                //TODO display loading stuff
 
                 saveUriToFile(it)
 
@@ -147,9 +141,10 @@ class AddAudioFragment : Fragment() {
 
         recorder = MediaRecorder(requireActivity()).apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            setAudioEncodingBitRate(16 * 44100)
+            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+            setAudioSamplingRate(44100);
+            setAudioEncodingBitRate(16)
             setOutputFile(path)
             try {
                 prepare()
