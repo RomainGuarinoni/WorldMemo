@@ -52,7 +52,9 @@ class AddAudioFragment : Fragment() {
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        path = savedInstanceState?.getString(PATH_KEY) ?: ""
+        if(path==null || path == ""){
+            path = savedInstanceState?.getString(PATH_KEY) ?: ""
+        }
         isAudioRecorded = savedInstanceState?.getBoolean(PATH_IS_AUDIO_RECORDED) ?:false
 
         if(isAudioRecorded){
@@ -213,6 +215,7 @@ class AddAudioFragment : Fragment() {
                 start()
             } catch (e: IOException) {
                 Log.println(Log.ERROR, "audio player", "failed to prepare the audio")
+                Log.println(Log.ERROR, "audio player path", path)
                 Log.println(Log.ERROR, "audio player", e.stackTraceToString())
 
             }
@@ -317,6 +320,7 @@ class AddAudioFragment : Fragment() {
         out.close()
         inputStream.close()
         path = filePath
+        Log.d("path",path)
     }
 
 
