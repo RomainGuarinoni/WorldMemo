@@ -37,10 +37,17 @@ class AddFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val createAudioButton = binding.addAudio
+        val createPhotoButton = binding.addPhoto
 
         createAudioButton.setOnClickListener{
             Navigation.findNavController(view).navigate(R.id.action_navigation_add_to_addAudioFragment)
         }
+
+        createPhotoButton.setOnClickListener{
+            Navigation.findNavController(view).navigate(R.id.action_navigation_add_to_addPhotoFragment)
+        }
+
+
 
     }
 

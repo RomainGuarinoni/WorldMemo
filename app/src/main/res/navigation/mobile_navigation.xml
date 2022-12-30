@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_navigation_add_to_addAudioFragment"
             app:destination="@id/addAudioFragment" />
+        <action
+            android:id="@+id/action_navigation_add_to_addPhotoFragment"
+            app:destination="@id/addPhotoFragment3" />
     </fragment>
 
     <fragment
@@ -47,5 +50,14 @@
         <argument
             android:name="country_name"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/addPhotoFragment3"
+        android:name="com.example.worldmemo.ui.add.AddPhotoFragment"
+        android:label="fragment_add_photo"
+        tools:layout="@layout/fragment_add_photo" >
+        <action
+            android:id="@+id/action_addPhotoFragment3_to_navigation_add"
+            app:destination="@id/navigation_add" />
     </fragment>
 </navigation>

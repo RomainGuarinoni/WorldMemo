@@ -33,7 +33,7 @@ class AddAudioFragment : Fragment() {
     private lateinit var stopRecordButton: Button
     private lateinit var playRecordButton: Button
     private lateinit var deleteRecordButton: Button
-    private lateinit var path: String
+    private var path: String = ""
     private lateinit var sqLiteHelper: SQLiteHelper
     private var recorder: MediaRecorder? = null
     private var player: MediaPlayer? = null
@@ -52,12 +52,12 @@ class AddAudioFragment : Fragment() {
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        if(path==null || path == ""){
+        if (path == "") {
             path = savedInstanceState?.getString(PATH_KEY) ?: ""
         }
-        isAudioRecorded = savedInstanceState?.getBoolean(PATH_IS_AUDIO_RECORDED) ?:false
+        isAudioRecorded = savedInstanceState?.getBoolean(PATH_IS_AUDIO_RECORDED) ?: false
 
-        if(isAudioRecorded){
+        if (isAudioRecorded) {
             startRecordButton.visibility = Button.INVISIBLE
             stopRecordButton.visibility = Button.INVISIBLE
             playRecordButton.visibility = Button.VISIBLE
@@ -262,7 +262,7 @@ class AddAudioFragment : Fragment() {
             return
         }
 
-        if (!isAudioRecorded) {
+        if (!isAudioRecorded || path == "") {
             Toast.makeText(requireActivity(), "PLease, record an audio", Toast.LENGTH_SHORT).show()
             return
         }
@@ -320,7 +320,7 @@ class AddAudioFragment : Fragment() {
         out.close()
         inputStream.close()
         path = filePath
-        Log.d("path",path)
+        Log.d("path", path)
     }
 
 

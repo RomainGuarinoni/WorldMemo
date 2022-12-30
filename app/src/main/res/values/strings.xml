@@ -14,14 +14,20 @@
     <string name="image">Image</string>
     <string name="audio">Audio</string>
     <string name="audio_form">Audio :</string>
+    <string name="photo_form">Photo :</string>
     <string name="add_fragment_audio">Add an audio</string>
+    <string name="add_fragment_photo">Add a photo</string>
     <string name="sentence">Sentence</string>
     <string name="country">Country :</string>
     <string name="start_record">Record</string>
+    <string name="take_photo">Take photo</string>
+    <string name="select_photo">Select photo</string>
     <string name="stop_record">Stop</string>
     <string name="play_record">Play</string>
     <string name="delete_record">Delete</string>
     <string name="translation">Translation</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
     <string name="add">Add</string>
 
 
