@@ -1,7 +1,7 @@
 package com.example.worldmemo.model
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 data class AudioModel(
@@ -18,8 +18,12 @@ data class AudioModel(
         }
 
         fun getCreatedDate(): String {
-            val formatter = DateTimeFormatter.ofPattern("YYYY-MM-DD HH:MM:SS")
-            return  LocalDateTime.now().format(formatter)
+            val tz = TimeZone.getTimeZone("UTC")
+            val df: DateFormat =
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss") // Quoted "Z" to indicate UTC, no timezone offset
+
+            df.timeZone = tz
+           return df.format(Date())
         }
     }
 }

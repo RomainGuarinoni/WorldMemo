@@ -101,12 +101,16 @@ class AudioRecyclerAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioViewHolder {
+
+
+
         return AudioViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_row, parent, false)
         )
     }
 
     override fun onBindViewHolder(holder: AudioViewHolder, position: Int) {
+
         val curAudio = audios[position]
 
         holder.countryView.text = curAudio.country

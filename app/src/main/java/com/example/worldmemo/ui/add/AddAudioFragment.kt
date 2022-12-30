@@ -143,7 +143,7 @@ class AddAudioFragment : Fragment() {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-            setAudioSamplingRate(44100);
+            setAudioSamplingRate(44100)
             setAudioEncodingBitRate(16)
             setOutputFile(path)
             try {
