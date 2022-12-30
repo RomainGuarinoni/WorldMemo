@@ -13,6 +13,7 @@
     <string name="add_fragment_title">Select a media to add</string>
     <string name="image">Image</string>
     <string name="audio">Audio</string>
+    <string name="photo">Photo</string>
     <string name="audio_form">Audio :</string>
     <string name="photo_form">Photo :</string>
     <string name="add_fragment_audio">Add an audio</string>

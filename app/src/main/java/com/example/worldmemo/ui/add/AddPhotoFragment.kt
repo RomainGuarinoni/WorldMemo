@@ -38,8 +38,8 @@ class AddPhotoFragment : Fragment() {
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        if (uri == null) {
-            uri =Uri.parse( savedInstanceState?.getString(PATH_URI)) ?: null
+        if (uri == null && savedInstanceState?.getString(PATH_URI) != null) {
+            uri = Uri.parse(savedInstanceState?.getString(PATH_URI))
         }
 
 
@@ -122,8 +122,7 @@ class AddPhotoFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             //Image Uri will not be null for RESULT_OK
-            val uri: Uri = data?.data!!
-
+            uri = data?.data!!
 
 
             // Use Uri object instead of File to avoid storage permissions

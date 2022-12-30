@@ -1,13 +1,11 @@
 package com.example.worldmemo.ui.home
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.Button
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -15,14 +13,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.adapter.AudioRecyclerAdapter
+import com.example.worldmemo.adapter.PhotoRecyclerAdapter
 import com.example.worldmemo.databinding.FragmentHomeBinding
 import com.example.worldmemo.model.AudioModel
+import com.example.worldmemo.model.PhotoModel
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 
-class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
+
+class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks , PhotoRecyclerAdapter.Callbacks{
 
     private var _binding: FragmentHomeBinding? = null
     private lateinit var audioList: ArrayList<AudioModel>
-    private lateinit var adapter: AudioRecyclerAdapter
+    private lateinit var photoList: ArrayList<PhotoModel>
+    private lateinit var audioAdapter: AudioRecyclerAdapter
+    private lateinit var photoAdapter: PhotoRecyclerAdapter
 
     private lateinit var sqliteHelper: SQLiteHelper
 
@@ -49,6 +54,7 @@ class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
         val buttonLayout = binding.homeDeleteButtonView
         val deleteButton = binding.homeDeleteButton
         val shareButton = binding.homeShareButton
+        val tabLayout = binding.homeTableLayout
 
         // Remove auto focus of the searchView
         searchView.clearFocus()
@@ -66,22 +72,36 @@ class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
 
         buttonLayout.visibility = View.GONE
         deleteButton.setOnClickListener {
-            adapter.deleteSelected()
+            audioAdapter.deleteSelected()
         }
         shareButton.setOnClickListener {
-            adapter.shareSelected()
+            audioAdapter.shareSelected()
         }
 
 
-        // Insert the data for audio list
+        // Insert the data for audio list and photo list
         audioList = sqliteHelper.getAllAudio()
+        photoList = sqliteHelper.getAllPhotos()
 
 
 
-
-        adapter = AudioRecyclerAdapter(audioList, this,requireActivity())
+        audioAdapter = AudioRecyclerAdapter(audioList, this, requireActivity())
+        photoAdapter = PhotoRecyclerAdapter(photoList, this, requireActivity())
         recycleView.layoutManager = LinearLayoutManager(context)
-        recycleView.adapter = adapter
+        recycleView.adapter = audioAdapter
+
+        tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                if (tabLayout.selectedTabPosition == 0) {
+                    recycleView.adapter = audioAdapter
+                } else {
+                    recycleView.adapter = photoAdapter
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
 
 
         return root
@@ -100,8 +120,6 @@ class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
     }
 
 
-
-
     override fun onSelectEnd() {
 
         val buttonLayout = binding.homeDeleteButtonView
@@ -116,6 +134,10 @@ class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
         Log.println(Log.INFO, "audio list size", audioList.size.toString())
 
 
+    }
+
+    override fun onDeletePhoto(photo: PhotoModel) {
+        TODO("Not yet implemented")
     }
 
     override fun onDeleteAudio(audio: AudioModel) {
@@ -139,20 +161,30 @@ class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
 
         val filterLower = filter.lowercase()
 
-        val filteredList = ArrayList<AudioModel>()
+        val filteredAudioList = ArrayList<AudioModel>()
+        val filteredPhotoList = ArrayList<PhotoModel>()
 
-        Log.println(Log.INFO, "audio list size", audioList.size.toString())
 
 
         audioList.forEach {
             if (it.sentence.lowercase().contains(filterLower) || it.translation.lowercase()
                     .contains(filterLower) || it.country.lowercase().contains(filterLower)
             ) {
-                filteredList.add(it)
+                filteredAudioList.add(it)
             }
         }
 
-        adapter.setFilteredList(filteredList)
+        photoList.forEach {
+            if (it.title.lowercase().contains(filterLower) || it.description.lowercase()
+                    .contains(filterLower) || it.country.lowercase().contains(filterLower)
+            ) {
+                filteredPhotoList.add(it)
+            }
+        }
+
+
+        audioAdapter.setFilteredList(filteredAudioList)
+        photoAdapter.setFilteredList(filteredPhotoList)
 
 
     }

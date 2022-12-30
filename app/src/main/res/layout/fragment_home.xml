@@ -19,6 +19,26 @@
         app:layout_constraintTop_toTopOf="parent"
         app:queryHint="Search here ..." />
 
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/home_table_layout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_view">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/audio" />
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/photo" />
+
+    </com.google.android.material.tabs.TabLayout>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/home_recycler_view"
         android:layout_width="match_parent"
@@ -27,38 +47,37 @@
         app:layout_constraintBottom_toTopOf="@+id/home_delete_button_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_view" />
+        app:layout_constraintTop_toBottomOf="@+id/home_table_layout" />
 
     <LinearLayout
         android:id="@+id/home_delete_button_view"
         android:layout_width="match_parent"
         android:layout_height="70dp"
+        android:background="@android:color/transparent"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@android:color/transparent"
         app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white"
-            android:gravity="center"
-            >
+            android:gravity="center">
+
             <Button
                 android:id="@+id/home_delete_button"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                android:text="@string/button_delete"
                 android:layout_marginHorizontal="10dp"
-                />
+                android:text="@string/button_delete" />
+
             <Button
                 android:id="@+id/home_share_button"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                android:text="@string/button_share"
                 android:layout_marginHorizontal="10dp"
-                />
+                android:text="@string/button_share" />
         </LinearLayout>
     </LinearLayout>
 
