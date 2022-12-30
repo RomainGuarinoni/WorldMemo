@@ -55,7 +55,9 @@ class AddAudioFragment : Fragment() {
         if (path == "") {
             path = savedInstanceState?.getString(PATH_KEY) ?: ""
         }
-        isAudioRecorded = savedInstanceState?.getBoolean(PATH_IS_AUDIO_RECORDED) ?: false
+        if(!isAudioRecorded){
+            isAudioRecorded = savedInstanceState?.getBoolean(PATH_IS_AUDIO_RECORDED) ?: false
+        }
 
         if (isAudioRecorded) {
             startRecordButton.visibility = Button.INVISIBLE
