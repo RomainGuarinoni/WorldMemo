@@ -71,7 +71,9 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
         val intent = intent
 
         if(intent.type !=null){
+            navView.selectedItemId = R.id.navigation_add
             navController.navigate(R.id.addAudioFragment)
+
         }
 
     }
