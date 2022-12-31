@@ -15,12 +15,9 @@ import androidx.fragment.app.Fragment
 import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.model.PhotoModel
+import com.example.worldmemo.utils.FileUtils
 import com.github.dhaval2404.imagepicker.ImagePicker
 import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStream
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 
 class AddPhotoFragment : Fragment() {
@@ -117,8 +114,11 @@ class AddPhotoFragment : Fragment() {
         if (intent.type != null && intent.type!!.startsWith("image/")) {
             (intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as? Uri)?.let {
 
+                val filePath =
+                    FileUtils.saveUriToFile(requireActivity(), it, FileUtils.FileType.PHOTO)
 
-                saveUriToFile(it)
+                uri = File(filePath).toUri()
+
                 imagePreview.setImageURI(uri)
             }
         }
@@ -174,37 +174,6 @@ class AddPhotoFragment : Fragment() {
         }
 
         uri = null
-
-    }
-
-    private fun saveUriToFile(uriToSave: Uri) {
-        val inputStream = requireActivity().contentResolver.openInputStream(uriToSave)!!
-        val filePath = createPhotoFile()
-        val out: OutputStream = FileOutputStream(File(filePath))
-        val buf = ByteArray(1024)
-        var len: Int
-        while (inputStream.read(buf).also { len = it } > 0) {
-            out.write(buf, 0, len)
-        }
-        out.close()
-        inputStream.close()
-        uri = File(filePath).toUri()
-    }
-
-    private fun createPhotoFile(): String {
-
-        val formatter = DateTimeFormatter.ofPattern("YYYY_MM_DD_HH_MM_SS")
-        val currentDate = LocalDateTime.now().format(formatter)
-        val fileName = "${currentDate}_photo.jpg"
-
-        val DCIMfolder = File("${requireActivity().getExternalFilesDir(null)?.absolutePath}/DCIM")
-
-
-        if (!DCIMfolder.isDirectory) {
-            DCIMfolder.mkdir()
-        }
-
-        return "${DCIMfolder.absolutePath}/$fileName"
 
     }
 

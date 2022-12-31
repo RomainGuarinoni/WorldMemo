@@ -15,12 +15,9 @@ import androidx.fragment.app.Fragment
 import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.model.AudioModel
+import com.example.worldmemo.utils.FileUtils
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
-import java.io.OutputStream
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 
 class AddAudioFragment : Fragment() {
@@ -55,7 +52,7 @@ class AddAudioFragment : Fragment() {
         if (path == "") {
             path = savedInstanceState?.getString(PATH_KEY) ?: ""
         }
-        if(!isAudioRecorded){
+        if (!isAudioRecorded) {
             isAudioRecorded = savedInstanceState?.getBoolean(PATH_IS_AUDIO_RECORDED) ?: false
         }
 
@@ -137,7 +134,9 @@ class AddAudioFragment : Fragment() {
         if (intent.type != null && intent.type!!.startsWith("audio/")) {
             (intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as? Uri)?.let {
 
-                saveUriToFile(it)
+
+                path = FileUtils.saveUriToFile(requireActivity(), it, FileUtils.FileType.AUDIO)
+
 
                 isAudioRecorded = true
 
@@ -151,19 +150,9 @@ class AddAudioFragment : Fragment() {
 
     }
 
-    private fun createAudioFile(): String {
-
-        val formatter = DateTimeFormatter.ofPattern("YYYY_MM_DD_HH_MM_SS")
-        val currentDate = LocalDateTime.now().format(formatter)
-        val fileName = "${currentDate}_audio.aac"
-
-        return "${requireActivity().getExternalFilesDir(null)?.absolutePath}/$fileName"
-
-    }
-
     private fun startRecording() {
 
-        path = createAudioFile()
+        path = FileUtils.createFile(FileUtils.FileType.AUDIO, requireActivity())
 
         recorder = MediaRecorder(requireActivity()).apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
@@ -308,21 +297,6 @@ class AddAudioFragment : Fragment() {
     private fun resetForm() {
         sentenceInput.setText("")
         translationInput.setText("")
-    }
-
-    private fun saveUriToFile(uri: Uri) {
-        val inputStream = requireActivity().contentResolver.openInputStream(uri)!!
-        val filePath = createAudioFile()
-        val out: OutputStream = FileOutputStream(File(filePath))
-        val buf = ByteArray(1024)
-        var len: Int
-        while (inputStream.read(buf).also { len = it } > 0) {
-            out.write(buf, 0, len)
-        }
-        out.close()
-        inputStream.close()
-        path = filePath
-        Log.d("path", path)
     }
 
 
