@@ -42,7 +42,7 @@ class SQLiteHelper(context: Context) :
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         db!!.execSQL("DROP TABLE IF EXISTS $TBL_AUDIO")
-        db!!.execSQL("DROP TABLE IF EXISTS $TBL_PHOTO")
+        db.execSQL("DROP TABLE IF EXISTS $TBL_PHOTO")
         onCreate(db)
     }
 
@@ -170,7 +170,7 @@ class SQLiteHelper(context: Context) :
 
     fun getAllCountries(): ArrayList<CountryModel> {
         val result = ArrayList<CountryModel>()
-        val selectQuery = "SELECT DISTINCT $COUNTRY_COL FROM $TBL_AUDIO"
+        val selectQuery = "SELECT DISTINCT $COUNTRY_COL FROM $TBL_AUDIO UNION SELECT DISTINCT $COUNTRY_COL FROM $TBL_PHOTO"
         val db = this.readableDatabase
         val cursor: Cursor?
 
