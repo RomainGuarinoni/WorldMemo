@@ -153,17 +153,17 @@ class PhotoRecyclerAdapter(
 
         val curPhoto = photos[selectedItemsPosition[0]]
 
-        val requestFile = File(Uri.parse(curPhoto.path).path)
+        val requestFile = File(Uri.parse(curPhoto.path)!!.path!!)
 
         // Use the FileProvider to get a content URI
         val fileUri: Uri = FileProvider.getUriForFile(
             context, context.applicationContext.packageName + ".provider", requestFile
         )
 
-        share.putExtra(Intent.EXTRA_TEXT, "${curPhoto.title} \n ${curPhoto.description}");
-        share.putExtra(Intent.EXTRA_STREAM, fileUri);
-        share.type = "image/*";
-        share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        share.putExtra(Intent.EXTRA_TEXT, "${curPhoto.title} \n ${curPhoto.description}")
+        share.putExtra(Intent.EXTRA_STREAM, fileUri)
+        share.type = "image/*"
+        share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         context.startActivity(Intent.createChooser(share, "Share photo File"))
     }
 
@@ -175,7 +175,7 @@ class PhotoRecyclerAdapter(
             val selectedPhoto = photos[it]
             counter++
 
-            val requestFile = File(Uri.parse(selectedPhoto.path).path)
+            val requestFile = File(Uri.parse(selectedPhoto.path)!!.path!!)
 
             // Use the FileProvider to get a content URI
             val fileUri: Uri = FileProvider.getUriForFile(
@@ -188,7 +188,7 @@ class PhotoRecyclerAdapter(
         }
 
         val share = Intent(Intent.ACTION_SEND_MULTIPLE)
-        share.putExtra(Intent.EXTRA_TEXT, descriptionString);
+        share.putExtra(Intent.EXTRA_TEXT, descriptionString)
         share.type = "image/*"
         share.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileUris)
         share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
