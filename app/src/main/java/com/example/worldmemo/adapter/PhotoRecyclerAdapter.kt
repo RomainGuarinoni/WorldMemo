@@ -169,9 +169,11 @@ class PhotoRecyclerAdapter(
 
     private fun shareMultipleImage() {
         val fileUris: ArrayList<Uri> = ArrayList()
-
+        var descriptionString = ""
+        var counter = 0
         selectedItemsPosition.forEach {
             val selectedPhoto = photos[it]
+            counter++
 
             val requestFile = File(Uri.parse(selectedPhoto.path).path)
 
@@ -180,10 +182,13 @@ class PhotoRecyclerAdapter(
                 context, context.applicationContext.packageName + ".provider", requestFile
             )
 
+            descriptionString += "photo $counter : ${selectedPhoto.title} \n ${selectedPhoto.description} \n"
+
             fileUris.add(fileUri)
         }
 
         val share = Intent(Intent.ACTION_SEND_MULTIPLE)
+        share.putExtra(Intent.EXTRA_TEXT, descriptionString);
         share.type = "image/*"
         share.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileUris)
         share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
