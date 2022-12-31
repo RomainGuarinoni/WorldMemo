@@ -86,6 +86,8 @@ class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks, PhotoRecyclerAd
         shareButton.setOnClickListener {
             if (currentTab == AUDIO_TAB) {
                 audioAdapter.shareSelected()
+            } else if (currentTab == PHOTO_TAB) {
+                photoAdapter.shareSelected()
             }
         }
 

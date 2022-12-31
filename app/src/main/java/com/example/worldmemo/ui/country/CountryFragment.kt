@@ -85,8 +85,10 @@ class CountryFragment : Fragment(), AudioRecyclerAdapter.Callbacks, PhotoRecycle
             }
         }
         shareButton.setOnClickListener {
-            if(currentTab == AUDIO_TAB){
+            if (currentTab == AUDIO_TAB) {
                 audioAdapter.shareSelected()
+            } else if (currentTab == PHOTO_TAB) {
+                photoAdapter.shareSelected()
             }
         }
 
@@ -142,8 +144,6 @@ class CountryFragment : Fragment(), AudioRecyclerAdapter.Callbacks, PhotoRecycle
         buttonLayout.startAnimation(animation)
 
     }
-
-
 
 
     override fun onSelectEnd() {

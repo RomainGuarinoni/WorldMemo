@@ -10,10 +10,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.worldmemo.R
 import com.example.worldmemo.model.PhotoModel
+import java.io.File
 
 class PhotoRecyclerAdapter(
     private var photos: MutableList<PhotoModel>, val callbacks: Callbacks, val context: Context
@@ -22,7 +24,6 @@ class PhotoRecyclerAdapter(
     private var isSelectionMode = false
     private var selectedColor = Color.rgb(91, 149, 244)
     private val baseUrl = "https://countryflagsapi.com/png/"
-
 
 
     // We keep track to the position of the view because
@@ -39,7 +40,7 @@ class PhotoRecyclerAdapter(
         val titleView: TextView = itemView.findViewById(R.id.title_text)
         val descriptionView: TextView = itemView.findViewById(R.id.description_text)
         val countryFlag: ImageView = itemView.findViewById(R.id.country_flag)
-        val imageView:ImageView = itemView.findViewById(R.id.photo_view)
+        val imageView: ImageView = itemView.findViewById(R.id.photo_view)
 
         init {
             itemView.setOnClickListener(this)
@@ -90,9 +91,9 @@ class PhotoRecyclerAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
 
 
-
         return PhotoViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_photo_row, parent, false)
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.recycler_view_photo_row, parent, false)
         )
     }
 
@@ -142,22 +143,51 @@ class PhotoRecyclerAdapter(
     }
 
     fun shareSelected() {
+        if (selectedItemsPosition.size == 1) shareOneImage()
+        else shareMultipleImage()
+    }
 
+    private fun shareOneImage() {
+
+        val share = Intent(Intent.ACTION_SEND)
+
+        val curPhoto = photos[selectedItemsPosition[0]]
+
+        val requestFile = File(Uri.parse(curPhoto.path).path)
+
+        // Use the FileProvider to get a content URI
+        val fileUri: Uri = FileProvider.getUriForFile(
+            context, context.applicationContext.packageName + ".provider", requestFile
+        )
+
+        share.putExtra(Intent.EXTRA_TEXT, "${curPhoto.title} \n ${curPhoto.description}");
+        share.putExtra(Intent.EXTRA_STREAM, fileUri);
+        share.type = "image/*";
+        share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        context.startActivity(Intent.createChooser(share, "Share photo File"))
+    }
+
+    private fun shareMultipleImage() {
         val fileUris: ArrayList<Uri> = ArrayList()
 
         selectedItemsPosition.forEach {
             val selectedPhoto = photos[it]
 
-            fileUris.add(Uri.parse(selectedPhoto.path))
+            val requestFile = File(Uri.parse(selectedPhoto.path).path)
+
+            // Use the FileProvider to get a content URI
+            val fileUri: Uri = FileProvider.getUriForFile(
+                context, context.applicationContext.packageName + ".provider", requestFile
+            )
+
+            fileUris.add(fileUri)
         }
 
-
         val share = Intent(Intent.ACTION_SEND_MULTIPLE)
-        share.type = "photo/*"
+        share.type = "image/*"
         share.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileUris)
         share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         context.startActivity(Intent.createChooser(share, "Share photos File"))
-
     }
 
     fun hasItemSelected(): Boolean {
