@@ -39,10 +39,8 @@ class AddPhotoFragment : Fragment() {
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         if (uri == null && savedInstanceState?.getString(PATH_URI) != null) {
-            uri = Uri.parse(savedInstanceState?.getString(PATH_URI))
+            uri = Uri.parse(savedInstanceState.getString(PATH_URI))
         }
-
-
     }
 
     override fun onCreateView(

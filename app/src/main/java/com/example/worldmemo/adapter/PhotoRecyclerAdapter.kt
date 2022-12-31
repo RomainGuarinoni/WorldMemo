@@ -160,6 +160,10 @@ class PhotoRecyclerAdapter(
 
     }
 
+    fun hasItemSelected(): Boolean {
+        return selectedItemsPosition.size != 0
+    }
+
     interface Callbacks {
         fun onSelectStart()
         fun onSelectEnd()

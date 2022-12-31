@@ -103,7 +103,6 @@ class AudioRecyclerAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioViewHolder {
 
 
-
         return AudioViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_row, parent, false)
         )
@@ -166,9 +165,7 @@ class AudioRecyclerAdapter(
 
             // Use the FileProvider to get a content URI
             val fileUri: Uri = FileProvider.getUriForFile(
-                context,
-                context.applicationContext.packageName + ".provider",
-                requestFile
+                context, context.applicationContext.packageName + ".provider", requestFile
             )
 
             fileUris.add(fileUri)
@@ -237,6 +234,10 @@ class AudioRecyclerAdapter(
             curAudioPlayedView?.playButton?.visibility = Button.VISIBLE
             curAudioPlayedView?.stopButton?.visibility = Button.INVISIBLE
         }
+    }
+
+    fun hasItemSelected(): Boolean {
+        return selectedItemsPosition.size != 0
     }
 
     interface Callbacks {

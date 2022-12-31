@@ -21,15 +21,19 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 
 
-class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks , PhotoRecyclerAdapter.Callbacks{
+class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks, PhotoRecyclerAdapter.Callbacks {
 
     private var _binding: FragmentHomeBinding? = null
     private lateinit var audioList: ArrayList<AudioModel>
     private lateinit var photoList: ArrayList<PhotoModel>
     private lateinit var audioAdapter: AudioRecyclerAdapter
     private lateinit var photoAdapter: PhotoRecyclerAdapter
-
     private lateinit var sqliteHelper: SQLiteHelper
+
+    private val AUDIO_TAB = 0
+    private val PHOTO_TAB = 1
+    private var currentTab = AUDIO_TAB
+
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -71,11 +75,18 @@ class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks , PhotoRecyclerA
         })
 
         buttonLayout.visibility = View.GONE
+
         deleteButton.setOnClickListener {
-            audioAdapter.deleteSelected()
+            if (currentTab == AUDIO_TAB) {
+                audioAdapter.deleteSelected()
+            } else if (currentTab == PHOTO_TAB) {
+                photoAdapter.deleteSelected()
+            }
         }
         shareButton.setOnClickListener {
-            audioAdapter.shareSelected()
+            if (currentTab == AUDIO_TAB) {
+                audioAdapter.shareSelected()
+            }
         }
 
 
@@ -92,10 +103,31 @@ class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks , PhotoRecyclerA
 
         tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                if (tabLayout.selectedTabPosition == 0) {
+                if (tabLayout.selectedTabPosition == AUDIO_TAB) {
                     recycleView.adapter = audioAdapter
-                } else {
+                    currentTab = AUDIO_TAB
+
+                    if (audioAdapter.hasItemSelected() && buttonLayout.visibility == View.GONE) {
+                        // we let the buttons share and deleted visible because there is item selected too
+                        onSelectStart()
+                    } else if (!audioAdapter.hasItemSelected() && buttonLayout.visibility == View.VISIBLE) {
+                        // We hide the buttons because nothing is selected in this tab
+                        onSelectEnd()
+                    }
+
+                } else if (tabLayout.selectedTabPosition == PHOTO_TAB) {
                     recycleView.adapter = photoAdapter
+                    currentTab = PHOTO_TAB
+
+
+                    if (photoAdapter.hasItemSelected() && buttonLayout.visibility == View.GONE) {
+                        // we let the buttons share and deleted visible because there is item selected too
+                        onSelectStart()
+                    } else if (!photoAdapter.hasItemSelected() && buttonLayout.visibility == View.VISIBLE) {
+                        // We hide the buttons because nothing is selected in this tab
+                        onSelectEnd()
+                    }
+
                 }
             }
 
@@ -137,7 +169,12 @@ class HomeFragment : Fragment(), AudioRecyclerAdapter.Callbacks , PhotoRecyclerA
     }
 
     override fun onDeletePhoto(photo: PhotoModel) {
-        TODO("Not yet implemented")
+        val status = sqliteHelper.deletePhoto(photo)
+
+        if (status == sqliteHelper.FAIL_STATUS) {
+            Toast.makeText(requireActivity(), "Audio could not be deleted ...", Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 
     override fun onDeleteAudio(audio: AudioModel) {

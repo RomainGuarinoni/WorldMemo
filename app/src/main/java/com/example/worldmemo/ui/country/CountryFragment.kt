@@ -1,13 +1,11 @@
 package com.example.worldmemo.ui.country
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.Button
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -16,20 +14,28 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.adapter.AudioRecyclerAdapter
+import com.example.worldmemo.adapter.PhotoRecyclerAdapter
 import com.example.worldmemo.databinding.FragmentCountryBinding
 import com.example.worldmemo.model.AudioModel
+import com.example.worldmemo.model.PhotoModel
+import com.google.android.material.tabs.TabLayout
 
 
-class CountryFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
+class CountryFragment : Fragment(), AudioRecyclerAdapter.Callbacks, PhotoRecyclerAdapter.Callbacks {
 
     private var _binding: FragmentCountryBinding? = null
     private val binding get() = _binding!!
     private lateinit var audioList: ArrayList<AudioModel>
-    private lateinit var adapter: AudioRecyclerAdapter
+    private lateinit var photoList: ArrayList<PhotoModel>
+    private lateinit var audioAdapter: AudioRecyclerAdapter
+    private lateinit var photoAdapter: PhotoRecyclerAdapter
     private lateinit var sqliteHelper: SQLiteHelper
     private lateinit var countryName: String
     private val args: CountryFragmentArgs by navArgs()
 
+    private val AUDIO_TAB = 0
+    private val PHOTO_TAB = 1
+    private var currentTab = AUDIO_TAB
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -44,12 +50,15 @@ class CountryFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
         countryName = args.countryName
 
         audioList = sqliteHelper.getAudiosByCountry(countryName)
+        photoList = sqliteHelper.getPhotosByCountry(countryName)
 
         // Get the UI views
         val searchView = binding.searchView
         val recycleView = binding.countryRecyclerView
         val buttonLayout = binding.countryDeleteButtonView
         val deleteButton = binding.countryDeleteButton
+        val shareButton = binding.countryShareButton
+        val tabLayout = binding.countryTableLayout
 
         // Remove auto focus of the searchView
         searchView.clearFocus()
@@ -66,13 +75,59 @@ class CountryFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
         })
 
         buttonLayout.visibility = View.GONE
+
+
         deleteButton.setOnClickListener {
-            adapter.deleteSelected()
+            if (currentTab == AUDIO_TAB) {
+                audioAdapter.deleteSelected()
+            } else if (currentTab == PHOTO_TAB) {
+                photoAdapter.deleteSelected()
+            }
+        }
+        shareButton.setOnClickListener {
+            if(currentTab == AUDIO_TAB){
+                audioAdapter.shareSelected()
+            }
         }
 
-        adapter = AudioRecyclerAdapter(audioList, this, requireActivity())
+        audioAdapter = AudioRecyclerAdapter(audioList, this, requireActivity())
+        photoAdapter = PhotoRecyclerAdapter(photoList, this, requireActivity())
         recycleView.layoutManager = LinearLayoutManager(context)
-        recycleView.adapter = adapter
+        recycleView.adapter = audioAdapter
+
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                if (tabLayout.selectedTabPosition == AUDIO_TAB) {
+                    recycleView.adapter = audioAdapter
+                    currentTab = AUDIO_TAB
+
+                    if (audioAdapter.hasItemSelected() && buttonLayout.visibility == View.GONE) {
+                        // we let the buttons share and deleted visible because there is item selected too
+                        onSelectStart()
+                    } else if (!audioAdapter.hasItemSelected() && buttonLayout.visibility == View.VISIBLE) {
+                        // We hide the buttons because nothing is selected in this tab
+                        onSelectEnd()
+                    }
+
+                } else if (tabLayout.selectedTabPosition == PHOTO_TAB) {
+                    recycleView.adapter = photoAdapter
+                    currentTab = PHOTO_TAB
+
+
+                    if (photoAdapter.hasItemSelected() && buttonLayout.visibility == View.GONE) {
+                        // we let the buttons share and deleted visible because there is item selected too
+                        onSelectStart()
+                    } else if (!photoAdapter.hasItemSelected() && buttonLayout.visibility == View.VISIBLE) {
+                        // We hide the buttons because nothing is selected in this tab
+                        onSelectEnd()
+                    }
+
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
 
         return root
     }
@@ -116,6 +171,15 @@ class CountryFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
         }
     }
 
+    override fun onDeletePhoto(photo: PhotoModel) {
+        val status = sqliteHelper.deletePhoto(photo)
+
+        if (status == sqliteHelper.FAIL_STATUS) {
+            Toast.makeText(requireActivity(), "Audio could not be deleted ...", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         Log.println(Log.INFO, "life cycle", "Home fragment has been destroyed")
@@ -128,20 +192,30 @@ class CountryFragment : Fragment(), AudioRecyclerAdapter.Callbacks {
 
         val filterLower = filter.lowercase()
 
-        val filteredList = ArrayList<AudioModel>()
+        val filteredAudioList = ArrayList<AudioModel>()
+        val filteredPhotoList = ArrayList<PhotoModel>()
 
-        Log.println(Log.INFO, "audio list size", audioList.size.toString())
 
 
         audioList.forEach {
             if (it.sentence.lowercase().contains(filterLower) || it.translation.lowercase()
                     .contains(filterLower) || it.country.lowercase().contains(filterLower)
             ) {
-                filteredList.add(it)
+                filteredAudioList.add(it)
             }
         }
 
-        adapter.setFilteredList(filteredList)
+        photoList.forEach {
+            if (it.title.lowercase().contains(filterLower) || it.description.lowercase()
+                    .contains(filterLower) || it.country.lowercase().contains(filterLower)
+            ) {
+                filteredPhotoList.add(it)
+            }
+        }
+
+
+        audioAdapter.setFilteredList(filteredAudioList)
+        photoAdapter.setFilteredList(filteredPhotoList)
 
 
     }

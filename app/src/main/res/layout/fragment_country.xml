@@ -19,6 +19,25 @@
         app:layout_constraintTop_toTopOf="parent"
         app:queryHint="Search here ..." />
 
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/country_table_layout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_view">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/audio" />
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/photo" />
+
+    </com.google.android.material.tabs.TabLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/country_recycler_view"
         android:layout_width="match_parent"
@@ -27,7 +46,7 @@
         app:layout_constraintBottom_toTopOf="@+id/country_delete_button_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_view" />
+        app:layout_constraintTop_toBottomOf="@+id/country_table_layout" />
 
     <LinearLayout
         android:id="@+id/country_delete_button_view"
