@@ -60,10 +60,12 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
 
         val intent = intent
 
-        if (intent.type != null) {
+        if (intent.type?.contains("audio/") == true) {
             navView.selectedItemId = R.id.navigation_add
             navController.navigate(R.id.addAudioFragment)
-
+        } else if (intent.type?.contains("image/") == true) {
+            navView.selectedItemId = R.id.navigation_add
+            navController.navigate(R.id.addPhotoFragment)
         }
     }
 
