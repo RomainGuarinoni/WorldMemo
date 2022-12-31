@@ -10,12 +10,15 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.example.worldmemo.ImageActivity
 import com.example.worldmemo.R
 import com.example.worldmemo.model.PhotoModel
 import java.io.File
+
 
 class PhotoRecyclerAdapter(
     private var photos: MutableList<PhotoModel>, val callbacks: Callbacks, val context: Context
@@ -49,10 +52,13 @@ class PhotoRecyclerAdapter(
 
 
         override fun onClick(view: View) {
-            if (!isSelectionMode) return
-
-            handlePhotoClick(view, adapterPosition)
-
+            if (!isSelectionMode) {
+                val fullScreenIntent = Intent(context, ImageActivity::class.java)
+                fullScreenIntent.data = Uri.parse(photos[adapterPosition].path)
+                context.startActivity(fullScreenIntent)
+            }else{
+                handlePhotoClick(view, adapterPosition)
+            }
         }
 
         override fun onLongClick(view: View): Boolean {

@@ -20,9 +20,6 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
 
     private lateinit var binding: ActivityMainBinding
 
-
-
-
     private val requestMultiplePermissions = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -32,12 +29,8 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
         }
     }
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -53,11 +46,8 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
             )
         )
 
-
-
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
 
 
         requestMultiplePermissions.launch(
@@ -70,12 +60,11 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
 
         val intent = intent
 
-        if(intent.type !=null){
+        if (intent.type != null) {
             navView.selectedItemId = R.id.navigation_add
             navController.navigate(R.id.addAudioFragment)
 
         }
-
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -87,10 +76,10 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
 
     override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(this).memoryCache {
-                MemoryCache.Builder(this).maxSizePercent(0.25).build()
-            }.diskCache {
-                DiskCache.Builder().directory(this.cacheDir.resolve("image_cache"))
-                    .maxSizePercent(0.02).build()
-            }.build()
+            MemoryCache.Builder(this).maxSizePercent(0.25).build()
+        }.diskCache {
+            DiskCache.Builder().directory(this.cacheDir.resolve("image_cache")).maxSizePercent(0.02)
+                .build()
+        }.build()
     }
 }

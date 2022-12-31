@@ -18,6 +18,13 @@
         android:theme="@style/Theme.WorldMemo"
         tools:targetApi="31">
         <activity
+            android:name=".ImageActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name">
@@ -26,10 +33,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="audio/*" />
             </intent-filter>
 
@@ -37,6 +45,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
