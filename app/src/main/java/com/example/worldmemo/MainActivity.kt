@@ -29,6 +29,12 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
         }
     }
 
+    private val permissions = arrayOf(
+        Manifest.permission.RECORD_AUDIO,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -50,16 +56,10 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
         navView.setupWithNavController(navController)
 
 
-        requestMultiplePermissions.launch(
-            arrayOf(
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-            )
-        )
+        requestMultiplePermissions.launch(permissions)
 
+        // Redirect the user in case an intent is received on the app opening
         val intent = intent
-
         if (intent.type?.contains("audio/") == true) {
             navView.selectedItemId = R.id.navigation_add
             navController.navigate(R.id.addAudioFragment)
@@ -70,9 +70,7 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 

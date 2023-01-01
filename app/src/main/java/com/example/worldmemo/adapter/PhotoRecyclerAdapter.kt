@@ -12,7 +12,6 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
 import com.example.worldmemo.ImageActivity
 import com.example.worldmemo.R
 import com.example.worldmemo.model.PhotoModel
@@ -20,21 +19,9 @@ import java.io.File
 
 
 class PhotoRecyclerAdapter(
-    private var photos: MutableList<PhotoModel>, val callbacks: Callbacks, val context: Context
-) : RecyclerView.Adapter<PhotoRecyclerAdapter.PhotoViewHolder>() {
+    private var photos: MutableList<PhotoModel>, val callbacks: Callbacks<PhotoModel>, val context: Context
+) : BaseAdapter<PhotoRecyclerAdapter.PhotoViewHolder, PhotoModel>(callbacks , photos) {
 
-    private var isSelectionMode = false
-    private var selectedColor = Color.rgb(91, 149, 244)
-    private val baseUrl = "https://countryflagsapi.com/png/"
-
-
-    // We keep track to the position of the view because
-    // the recycle view always re used view so we cannot
-    // just apply change on the view during the click,
-    // otherwise it will affect other views later during
-    // the binding part. See https://stackoverflow.com/questions/55285596/changing-one-viewholder-item-also-affects-to-other-items
-    // for better understanding
-    private var selectedItemsPosition = ArrayList<Int>()
 
     inner class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener, View.OnLongClickListener {
@@ -56,7 +43,8 @@ class PhotoRecyclerAdapter(
                 fullScreenIntent.data = Uri.parse(photos[adapterPosition].path)
                 context.startActivity(fullScreenIntent)
             }else{
-                handlePhotoClick(view, adapterPosition)
+                val cardView: CardView = view.findViewById(R.id.photo_card_view)
+                handleViewClick(cardView, adapterPosition)
             }
         }
 
@@ -66,36 +54,15 @@ class PhotoRecyclerAdapter(
 
             isSelectionMode = true
 
-            return handlePhotoClick(view, adapterPosition)
-        }
-
-        private fun handlePhotoClick(view: View, position: Int): Boolean {
             val cardView: CardView = view.findViewById(R.id.photo_card_view)
 
-            if (selectedItemsPosition.contains(position)) {
-                selectedItemsPosition.remove(position)
-                cardView.setCardBackgroundColor(Color.WHITE)
 
-            } else {
-                selectedItemsPosition.add(position)
-                cardView.setCardBackgroundColor(selectedColor)
-
-            }
-
-
-            if (selectedItemsPosition.size == 0) {
-                isSelectionMode = false
-                callbacks.onSelectEnd()
-                return false
-            }
-
-            return true
+            return handleViewClick(cardView, adapterPosition)
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
-
-
         return PhotoViewHolder(
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.recycler_view_photo_row, parent, false)
@@ -110,9 +77,7 @@ class PhotoRecyclerAdapter(
         holder.titleView.text = curPhoto.title
         holder.descriptionView.text = curPhoto.description
 
-        holder.countryFlag.load(baseUrl + curPhoto.country) {
-            placeholder(R.drawable.ic_image)
-        }
+        loadFlag(curPhoto.country, holder.countryFlag)
 
         holder.imageView.setImageURI(Uri.parse(curPhoto.path))
 
@@ -121,7 +86,6 @@ class PhotoRecyclerAdapter(
             cardView.setCardBackgroundColor(selectedColor)
         } else {
             cardView.setCardBackgroundColor(Color.WHITE)
-
         }
     }
 
@@ -129,23 +93,6 @@ class PhotoRecyclerAdapter(
         return photos.size
     }
 
-    fun setFilteredList(filteredList: ArrayList<PhotoModel>) {
-        this.photos = filteredList
-        notifyDataSetChanged()
-    }
-
-    fun deleteSelected() {
-        selectedItemsPosition.sortDescending()
-        selectedItemsPosition.forEach {
-            val photo = photos[it]
-            callbacks.onDeletePhoto(photo)
-            photos.removeAt(it)
-            notifyItemRemoved(it)
-        }
-        selectedItemsPosition = ArrayList()
-        callbacks.onSelectEnd()
-        isSelectionMode = false
-    }
 
     fun shareSelected() {
         if (selectedItemsPosition.size == 1) shareOneImage()
@@ -200,14 +147,6 @@ class PhotoRecyclerAdapter(
         context.startActivity(Intent.createChooser(share, "Share photos File"))
     }
 
-    fun hasItemSelected(): Boolean {
-        return selectedItemsPosition.size != 0
-    }
 
-    interface Callbacks {
-        fun onSelectStart()
-        fun onSelectEnd()
-        fun onDeletePhoto(photo: PhotoModel)
-    }
 
 }
