@@ -1,20 +1,17 @@
 package com.example.worldmemo.ui.home
 
 import android.os.Bundle
-import android.provider.ContactsContract.Contacts.Photo
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.adapter.AudioRecyclerAdapter
-import com.example.worldmemo.adapter.BaseAdapter
+import com.example.worldmemo.adapter.Callbacks
 import com.example.worldmemo.adapter.PhotoRecyclerAdapter
 import com.example.worldmemo.databinding.FragmentHomeBinding
 import com.example.worldmemo.model.AudioModel
@@ -70,7 +67,7 @@ class HomeFragment : Fragment() {
             }
 
             override fun onQueryTextChange(filter: String?): Boolean {
-                filteredAudio(filter)
+                filteredItems(filter)
                 return true
             }
 
@@ -85,6 +82,7 @@ class HomeFragment : Fragment() {
                 photoAdapter.deleteSelected()
             }
         }
+
         shareButton.setOnClickListener {
             if (currentTab == AUDIO_TAB) {
                 audioAdapter.shareSelected()
@@ -93,15 +91,32 @@ class HomeFragment : Fragment() {
             }
         }
 
-
         // Insert the data for audio list and photo list
         audioList = sqliteHelper.getAllAudio()
         photoList = sqliteHelper.getAllPhotos()
 
+        val audioCallbacks = Callbacks<AudioModel>(requireActivity(), buttonLayout) {
+            val status = sqliteHelper.deleteAudio(it)
 
+            if (status == sqliteHelper.FAIL_STATUS) {
+                Toast.makeText(
+                    requireActivity(), "Audio could not be deleted ...", Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
 
-        audioAdapter = AudioRecyclerAdapter(audioList, AudioCallbacks(), requireActivity())
-        photoAdapter = PhotoRecyclerAdapter(photoList, PhotoCallbacks(), requireActivity())
+        val photoCallbacks = Callbacks<PhotoModel>(requireActivity(), buttonLayout) {
+            val status = sqliteHelper.deletePhoto(it)
+
+            if (status == sqliteHelper.FAIL_STATUS) {
+                Toast.makeText(
+                    requireActivity(), "Audio could not be deleted ...", Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        audioAdapter = AudioRecyclerAdapter(audioList, audioCallbacks, requireActivity())
+        photoAdapter = PhotoRecyclerAdapter(photoList, photoCallbacks, requireActivity())
         recycleView.layoutManager = LinearLayoutManager(context)
         recycleView.adapter = audioAdapter
 
@@ -113,10 +128,10 @@ class HomeFragment : Fragment() {
 
                     if (audioAdapter.hasItemSelected() && buttonLayout.visibility == View.GONE) {
                         // we let the buttons share and deleted visible because there is item selected too
-                        selectStart()
+                        audioCallbacks.onSelectStart()
                     } else if (!audioAdapter.hasItemSelected() && buttonLayout.visibility == View.VISIBLE) {
                         // We hide the buttons because nothing is selected in this tab
-                        selectEnd()
+                        audioCallbacks.onSelectEnd()
                     }
 
                 } else if (tabLayout.selectedTabPosition == PHOTO_TAB) {
@@ -126,10 +141,10 @@ class HomeFragment : Fragment() {
 
                     if (photoAdapter.hasItemSelected() && buttonLayout.visibility == View.GONE) {
                         // we let the buttons share and deleted visible because there is item selected too
-                        selectStart()
+                        audioCallbacks.onSelectStart()
                     } else if (!photoAdapter.hasItemSelected() && buttonLayout.visibility == View.VISIBLE) {
                         // We hide the buttons because nothing is selected in this tab
-                       selectEnd()
+                        audioCallbacks.onSelectEnd()
                     }
 
                 }
@@ -144,44 +159,13 @@ class HomeFragment : Fragment() {
     }
 
 
-    fun selectStart() {
-        val buttonLayout = binding.homeDeleteButtonView
-
-        buttonLayout.visibility = View.VISIBLE
-
-        val animation = AnimationUtils.loadAnimation(context, R.anim.slide_up)
-
-        buttonLayout.startAnimation(animation)
-
-    }
-
-
-    fun selectEnd() {
-
-        val buttonLayout = binding.homeDeleteButtonView
-
-
-        val animation = AnimationUtils.loadAnimation(context, R.anim.slide_down)
-
-        buttonLayout.startAnimation(animation)
-
-        buttonLayout.visibility = View.GONE
-
-        Log.println(Log.INFO, "audio list size", audioList.size.toString())
-
-
-    }
-
-
-
-
     override fun onDestroyView() {
         super.onDestroyView()
         Log.println(Log.INFO, "life cycle", "Home fragment has been destroyed")
         _binding = null
     }
 
-    fun filteredAudio(filter: String?) {
+    fun filteredItems(filter: String?) {
 
         if (filter == null) return
 
@@ -215,45 +199,7 @@ class HomeFragment : Fragment() {
 
     }
 
-    inner class AudioCallbacks : BaseAdapter.Callbacks<AudioModel> {
-        override fun onSelectStart() {
-            selectStart()
-        }
 
-        override fun onSelectEnd() {
-            selectEnd()
-        }
-
-        override fun onDelete(item: AudioModel) {
-            val status = sqliteHelper.deleteAudio(item)
-
-            if (status == sqliteHelper.FAIL_STATUS) {
-                Toast.makeText(
-                    requireActivity(), "Audio could not be deleted ...", Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-
-    }
-
-    inner class PhotoCallbacks : BaseAdapter.Callbacks<PhotoModel> {
-        override fun onSelectStart() {
-            selectStart()
-        }
-
-        override fun onSelectEnd() {
-            selectEnd()
-        }
-
-        override fun onDelete(item: PhotoModel) {
-            val status = sqliteHelper.deletePhoto(item)
-
-            if (status == sqliteHelper.FAIL_STATUS) {
-                Toast.makeText(requireActivity(), "Audio could not be deleted ...", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
-    }
 }
 
 

@@ -8,10 +8,11 @@ import coil.load
 import com.example.worldmemo.R
 
 /**
- * This class is the base class for the adapter that handle photos and audios
- * it provide the functionalities to handle selected items, delete them
+ * This class is the base class for the adapter that handle a selectable list
+ * it provide the functionalities to handle selected items and to delete them
+ * and some other utils function used in the adapter list
  */
-abstract class BaseAdapter<T : RecyclerView.ViewHolder, U>(
+abstract class SelectableAdapter<T : RecyclerView.ViewHolder, U>(
     private val callbacks: Callbacks<U>, private var list: MutableList<U>
 ) : RecyclerView.Adapter<T>(
 ) {
@@ -32,7 +33,7 @@ abstract class BaseAdapter<T : RecyclerView.ViewHolder, U>(
     /**
      * The Base URL for the flag api
      */
-    val baseUrl = "https://countryflagsapi.com/png/"
+    private val baseUrl = "https://countryflagsapi.com/png/"
 
     /**
      * Add or remove an item from the selected list depending
@@ -107,6 +108,10 @@ abstract class BaseAdapter<T : RecyclerView.ViewHolder, U>(
 
     fun hasItemSelected(): Boolean {
         return selectedItemsPosition.size != 0
+    }
+
+    override fun getItemCount(): Int {
+        return list.size
     }
 
     interface Callbacks<U> {

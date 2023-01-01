@@ -23,7 +23,7 @@ class AudioRecyclerAdapter(
     private var audios: MutableList<AudioModel>,
     val callbacks: Callbacks<AudioModel>,
     val context: Context
-) : BaseAdapter<AudioRecyclerAdapter.AudioViewHolder, AudioModel>(
+) : SelectableAdapter<AudioRecyclerAdapter.AudioViewHolder, AudioModel>(
     callbacks, audios
 ) {
     private var player: MediaPlayer? = null
@@ -89,9 +89,6 @@ class AudioRecyclerAdapter(
         setCardBackgroundColor(position, cardView)
     }
 
-    override fun getItemCount(): Int {
-        return audios.size
-    }
 
     fun shareSelected() {
         val fileUris: ArrayList<Uri> = ArrayList()

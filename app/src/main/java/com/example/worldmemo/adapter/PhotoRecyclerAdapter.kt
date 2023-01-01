@@ -19,8 +19,10 @@ import java.io.File
 
 
 class PhotoRecyclerAdapter(
-    private var photos: MutableList<PhotoModel>, val callbacks: Callbacks<PhotoModel>, val context: Context
-) : BaseAdapter<PhotoRecyclerAdapter.PhotoViewHolder, PhotoModel>(callbacks , photos) {
+    private var photos: MutableList<PhotoModel>,
+    val callbacks: Callbacks<PhotoModel>,
+    val context: Context
+) : SelectableAdapter<PhotoRecyclerAdapter.PhotoViewHolder, PhotoModel>(callbacks, photos) {
 
 
     inner class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
@@ -42,7 +44,7 @@ class PhotoRecyclerAdapter(
                 val fullScreenIntent = Intent(context, ImageActivity::class.java)
                 fullScreenIntent.data = Uri.parse(photos[adapterPosition].path)
                 context.startActivity(fullScreenIntent)
-            }else{
+            } else {
                 val cardView: CardView = view.findViewById(R.id.photo_card_view)
                 handleViewClick(cardView, adapterPosition)
             }
@@ -87,10 +89,6 @@ class PhotoRecyclerAdapter(
         } else {
             cardView.setCardBackgroundColor(Color.WHITE)
         }
-    }
-
-    override fun getItemCount(): Int {
-        return photos.size
     }
 
 
@@ -146,7 +144,6 @@ class PhotoRecyclerAdapter(
         share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         context.startActivity(Intent.createChooser(share, "Share photos File"))
     }
-
 
 
 }
