@@ -45,7 +45,6 @@
     <fragment
         android:id="@+id/countryFragment"
         android:name="com.example.worldmemo.ui.country.CountryFragment"
-        android:label="fragment_country"
         tools:layout="@layout/fragment_country" >
         <argument
             android:name="country_name"
@@ -54,7 +53,7 @@
     <fragment
         android:id="@+id/addPhotoFragment"
         android:name="com.example.worldmemo.ui.add.AddPhotoFragment"
-        android:label="fragment_add_photo"
+        android:label="@string/add_fragment_photo"
         tools:layout="@layout/fragment_add_photo" >
         <action
             android:id="@+id/action_addPhotoFragment_to_navigation_add"

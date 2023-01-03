@@ -57,7 +57,6 @@ class CountryRecycleAdapter(
             placeholder(R.drawable.ic_image)
         }
 
-        Log.println(Log.DEBUG, "cache key ${curCountry.name}", key.toString())
 
 
     }
