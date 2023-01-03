@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="110dp"
+    android:paddingVertical="5dp"
+    android:clipToPadding="false"
     android:layout_marginVertical="5dp">
 
     <androidx.cardview.widget.CardView
