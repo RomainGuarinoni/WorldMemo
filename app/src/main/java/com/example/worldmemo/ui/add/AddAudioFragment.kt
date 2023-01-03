@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.model.AudioModel
+import com.example.worldmemo.utils.Countries
 import com.example.worldmemo.utils.FileUtils
 import java.io.File
 import java.io.IOException
@@ -86,16 +87,13 @@ class AddAudioFragment : Fragment() {
         deleteRecordButton = view.findViewById(R.id.add_audio_delete_record_button)
         val addButton: Button = view.findViewById(R.id.add_country_button)
 
+        val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            requireActivity(), android.R.layout.simple_spinner_item, Countries.getKeys()
+        )
 
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter.createFromResource(
-            requireActivity(), R.array.countries_name, android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            // Specify the layout to use when the list of choices appears
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Apply the adapter to the spinner
-            spinner.adapter = adapter
-        }
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        spinner.adapter = spinnerAdapter
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -106,7 +104,10 @@ class AddAudioFragment : Fragment() {
             override fun onItemSelected(
                 parent: AdapterView<*>?, view: View?, position: Int, id: Long
             ) {
-                countryInput = parent!!.getItemAtPosition(position).toString()
+
+                val countryName = parent!!.getItemAtPosition(position).toString()
+
+                countryInput = Countries.getCountryCode(countryName)
             }
 
         }
