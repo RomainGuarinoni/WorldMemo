@@ -80,7 +80,7 @@ class AudioRecyclerAdapter(
         holder.sentenceView.text = curAudio.sentence
         holder.translationView.text = curAudio.translation
 
-        loadFlag(curAudio.country, holder.countryFlag)
+        loadFlag(curAudio.countryCode, holder.countryFlag)
 
         holder.playButton.setOnClickListener { playAudio(curAudio, holder) }
         holder.stopButton.setOnClickListener { pauseAudio() }

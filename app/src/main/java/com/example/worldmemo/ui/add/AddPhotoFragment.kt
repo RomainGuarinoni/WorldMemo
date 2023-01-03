@@ -26,7 +26,8 @@ class AddPhotoFragment : Fragment() {
     private lateinit var titleInput: EditText
     private lateinit var descriptionInput: EditText
     private lateinit var spinner: Spinner
-    private lateinit var countryInput: String
+    private lateinit var countryName: String
+    private lateinit var countryCode: String
     private lateinit var imagePreview: ImageView
     private var uri: Uri? = null
     private lateinit var sqLiteHelper: SQLiteHelper
@@ -72,7 +73,7 @@ class AddPhotoFragment : Fragment() {
 
 
         val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
-            requireActivity(), android.R.layout.simple_spinner_item, Countries.getKeys()
+            requireActivity(), android.R.layout.simple_spinner_item, Countries.getCountries()
         )
 
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -82,15 +83,17 @@ class AddPhotoFragment : Fragment() {
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 Log.println(Log.DEBUG, "drop down add audio", "nothing has been selected")
-                countryInput = ""
+                countryName = ""
+                countryCode = ""
             }
 
             override fun onItemSelected(
                 parent: AdapterView<*>?, view: View?, position: Int, id: Long
             ) {
-                val countryName = parent!!.getItemAtPosition(position).toString()
+                val country = parent!!.getItemAtPosition(position).toString()
 
-                countryInput = Countries.getCountryCode(countryName)
+                countryName = country
+                countryCode = Countries.getCountryCode(country)
             }
 
         }
@@ -146,7 +149,7 @@ class AddPhotoFragment : Fragment() {
         val title = titleInput.text.toString()
         val description = descriptionInput.text.toString()
 
-        if (title.isEmpty() || description.isEmpty() || countryInput.isEmpty()) {
+        if (title.isEmpty() || description.isEmpty() || countryCode.isEmpty() || countryName.isEmpty()) {
             Toast.makeText(requireActivity(), "Please, enter all the fields", Toast.LENGTH_SHORT)
                 .show()
             return
@@ -160,7 +163,11 @@ class AddPhotoFragment : Fragment() {
 
 
         val photo = PhotoModel(
-            title = title, description = description, country = countryInput, path = uri.toString()
+            title = title,
+            description = description,
+            country = countryName,
+            countryCode = countryCode,
+            path = uri.toString()
         )
 
         val status = sqLiteHelper.addPhoto(photo)

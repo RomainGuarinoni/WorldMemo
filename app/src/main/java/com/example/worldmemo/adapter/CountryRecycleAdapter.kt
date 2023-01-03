@@ -53,7 +53,7 @@ class CountryRecycleAdapter(
 
         holder.countryName.text = curCountry.name
 
-        holder.countryFlag.load(Countries.getCountryUrl(curCountry.name)) {
+        holder.countryFlag.load(Countries.getCountryUrl(curCountry.code)) {
             placeholder(R.drawable.ic_image)
         }
     }

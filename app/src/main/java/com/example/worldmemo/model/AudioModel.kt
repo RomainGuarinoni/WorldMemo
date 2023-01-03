@@ -9,8 +9,9 @@ data class AudioModel(
     val sentence: String,
     val translation: String,
     val country: String,
+    val countryCode: String,
     val path: String,
-    val createdDate:String = getCreatedDate(),
+    val createdDate: String = getCreatedDate(),
 ) {
     companion object {
         fun getUuid(): String {
@@ -23,7 +24,7 @@ data class AudioModel(
                 SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss") // Quoted "Z" to indicate UTC, no timezone offset
 
             df.timeZone = tz
-           return df.format(Date())
+            return df.format(Date())
         }
     }
 }

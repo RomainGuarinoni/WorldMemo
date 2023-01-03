@@ -9,6 +9,7 @@ data class PhotoModel(
     val title: String,
     val description: String,
     val country: String,
+    val countryCode: String,
     val path: String,
     val createdDate: String = getCreatedDate(),
 ) {

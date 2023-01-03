@@ -255,7 +255,7 @@ object Countries {
         countryhashmap["Zimbabwe"] = "ZW"
     }
 
-    fun getKeys(): List<String> {
+    fun getCountries(): List<String> {
         val keys = this.countryhashmap.keys.toList()
 
         return keys.sorted()

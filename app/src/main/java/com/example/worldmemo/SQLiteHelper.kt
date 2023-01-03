@@ -16,7 +16,7 @@ class SQLiteHelper(context: Context) :
     val FAIL_STATUS = -1
 
     companion object {
-        private const val DATABASE_VERSION = 5
+        private const val DATABASE_VERSION = 7
         private const val DATABASE_NAME = "worldmemo.db"
         private const val TBL_AUDIO = "tbl_audio"
         private const val TBL_PHOTO = "tbl_photo"
@@ -24,6 +24,7 @@ class SQLiteHelper(context: Context) :
         private const val SENTENCE_COL = "sentence"
         private const val TRANSLATION_COL = "translation"
         private const val COUNTRY_COL = "country"
+        private const val COUNTRY_CODE_COL = "countryCode"
         private const val TITLE_COL = "title"
         private const val DESCRIPTION_COL = "description"
         private const val CREATED_DATE_COL = "created_date"
@@ -32,10 +33,10 @@ class SQLiteHelper(context: Context) :
 
     override fun onCreate(db: SQLiteDatabase?) {
         val createTblAudio =
-            ("CREATE TABLE $TBL_AUDIO ($ID_COL TEXT PRIMARY KEY, $SENTENCE_COL TEXT, $TRANSLATION_COL TEXT, $COUNTRY_COL TEXT, $CREATED_DATE_COL TEXT, $PATH_COL TEXT)")
+            ("CREATE TABLE $TBL_AUDIO ($ID_COL TEXT PRIMARY KEY, $SENTENCE_COL TEXT, $TRANSLATION_COL TEXT, $COUNTRY_COL TEXT, $COUNTRY_CODE_COL TEXT, $CREATED_DATE_COL TEXT, $PATH_COL TEXT)")
 
         val createTblPhoto =
-            ("CREATE TABLE $TBL_PHOTO($ID_COL TEXT PRIMARY KEY, $TITLE_COL TEXT, $DESCRIPTION_COL TEXT, $COUNTRY_COL TEXT, $CREATED_DATE_COL TEXT, $PATH_COL TEXT)")
+            ("CREATE TABLE $TBL_PHOTO($ID_COL TEXT PRIMARY KEY, $TITLE_COL TEXT, $DESCRIPTION_COL TEXT, $COUNTRY_COL TEXT, $COUNTRY_CODE_COL TEXT, $CREATED_DATE_COL TEXT, $PATH_COL TEXT)")
 
         db?.execSQL(createTblAudio)
         db?.execSQL(createTblPhoto)
@@ -55,6 +56,7 @@ class SQLiteHelper(context: Context) :
         contentValues.put(SENTENCE_COL, audio.sentence)
         contentValues.put(TRANSLATION_COL, audio.translation)
         contentValues.put(COUNTRY_COL, audio.country)
+        contentValues.put(COUNTRY_CODE_COL, audio.countryCode)
         contentValues.put(PATH_COL, audio.path)
         contentValues.put(CREATED_DATE_COL, audio.createdDate)
 
@@ -79,6 +81,11 @@ class SQLiteHelper(context: Context) :
                     val translation: String =
                         cursor.getString(cursor.getColumnIndex(TRANSLATION_COL))
                     val country: String = cursor.getString(cursor.getColumnIndex(COUNTRY_COL))
+                    val countryCode: String = cursor.getString(
+                        cursor.getColumnIndex(
+                            COUNTRY_CODE_COL
+                        )
+                    )
                     val path: String = cursor.getString(cursor.getColumnIndex(PATH_COL))
                     val createdDate: String = cursor.getString(
                         cursor.getColumnIndex(
@@ -93,6 +100,7 @@ class SQLiteHelper(context: Context) :
                             translation = translation,
                             country = country,
                             path = path,
+                            countryCode = countryCode,
                             createdDate = createdDate
                         )
                     )
@@ -116,6 +124,7 @@ class SQLiteHelper(context: Context) :
         contentValues.put(TITLE_COL, photo.title)
         contentValues.put(DESCRIPTION_COL, photo.description)
         contentValues.put(COUNTRY_COL, photo.country)
+        contentValues.put(COUNTRY_CODE_COL, photo.countryCode)
         contentValues.put(PATH_COL, photo.path)
         contentValues.put(CREATED_DATE_COL, photo.createdDate)
 
@@ -140,6 +149,8 @@ class SQLiteHelper(context: Context) :
                     val description: String =
                         cursor.getString(cursor.getColumnIndex(DESCRIPTION_COL))
                     val country: String = cursor.getString(cursor.getColumnIndex(COUNTRY_COL))
+                    val countryCode: String =
+                        cursor.getString(cursor.getColumnIndex(COUNTRY_CODE_COL))
                     val path: String = cursor.getString(cursor.getColumnIndex(PATH_COL))
                     val createdDate: String = cursor.getString(
                         cursor.getColumnIndex(
@@ -153,6 +164,7 @@ class SQLiteHelper(context: Context) :
                             title = title,
                             description = description,
                             country = country,
+                            countryCode = countryCode,
                             path = path,
                             createdDate = createdDate
                         )
@@ -171,7 +183,8 @@ class SQLiteHelper(context: Context) :
 
     fun getAllCountries(): ArrayList<CountryModel> {
         val result = ArrayList<CountryModel>()
-        val selectQuery = "SELECT DISTINCT $COUNTRY_COL FROM $TBL_AUDIO UNION SELECT DISTINCT $COUNTRY_COL FROM $TBL_PHOTO"
+        val selectQuery =
+            "SELECT DISTINCT $COUNTRY_COL, $COUNTRY_CODE_COL FROM $TBL_AUDIO UNION SELECT DISTINCT $COUNTRY_COL, $COUNTRY_CODE_COL FROM $TBL_PHOTO"
         val db = this.readableDatabase
         val cursor: Cursor?
 
@@ -181,8 +194,9 @@ class SQLiteHelper(context: Context) :
             if (cursor.moveToFirst()) {
                 do {
                     val name: String = cursor.getString(cursor.getColumnIndex(COUNTRY_COL))
+                    val code: String = cursor.getString(cursor.getColumnIndex(COUNTRY_CODE_COL))
                     result.add(
-                        CountryModel(name)
+                        CountryModel(name = name, code = code)
                     )
 
                 } while (cursor.moveToNext())
@@ -198,8 +212,11 @@ class SQLiteHelper(context: Context) :
 
     fun getAudiosByCountry(countryName: String): ArrayList<AudioModel> {
         val result = ArrayList<AudioModel>()
-        val selectQuery =
-            "SELECT * FROM $TBL_AUDIO WHERE $COUNTRY_COL = ${DatabaseUtils.sqlEscapeString(countryName)} ORDER BY $CREATED_DATE_COL DESC"
+        val selectQuery = "SELECT * FROM $TBL_AUDIO WHERE $COUNTRY_COL = ${
+            DatabaseUtils.sqlEscapeString(
+                countryName
+            )
+        } ORDER BY $CREATED_DATE_COL DESC"
         val db = this.readableDatabase
         val cursor: Cursor?
 
@@ -214,6 +231,8 @@ class SQLiteHelper(context: Context) :
                     val translation: String =
                         cursor.getString(cursor.getColumnIndex(TRANSLATION_COL))
                     val country: String = cursor.getString(cursor.getColumnIndex(COUNTRY_COL))
+                    val countryCode: String =
+                        cursor.getString(cursor.getColumnIndex(COUNTRY_CODE_COL))
                     val path: String = cursor.getString(cursor.getColumnIndex(PATH_COL))
                     val createdDate: String = cursor.getString(
                         cursor.getColumnIndex(
@@ -227,6 +246,7 @@ class SQLiteHelper(context: Context) :
                             translation = translation,
                             country = country,
                             path = path,
+                            countryCode = countryCode,
                             createdDate = createdDate
                         )
                     )
@@ -245,8 +265,11 @@ class SQLiteHelper(context: Context) :
 
     fun getPhotosByCountry(countryName: String): ArrayList<PhotoModel> {
         val result = ArrayList<PhotoModel>()
-        val selectQuery =
-            "SELECT * FROM $TBL_PHOTO WHERE $COUNTRY_COL = ${DatabaseUtils.sqlEscapeString(countryName)} ORDER BY $CREATED_DATE_COL DESC"
+        val selectQuery = "SELECT * FROM $TBL_PHOTO WHERE $COUNTRY_COL = ${
+            DatabaseUtils.sqlEscapeString(
+                countryName
+            )
+        } ORDER BY $CREATED_DATE_COL DESC"
         val db = this.readableDatabase
         val cursor: Cursor?
 
@@ -261,6 +284,8 @@ class SQLiteHelper(context: Context) :
                     val description: String =
                         cursor.getString(cursor.getColumnIndex(DESCRIPTION_COL))
                     val country: String = cursor.getString(cursor.getColumnIndex(COUNTRY_COL))
+                    val countryCode: String =
+                        cursor.getString(cursor.getColumnIndex(COUNTRY_CODE_COL))
                     val path: String = cursor.getString(cursor.getColumnIndex(PATH_COL))
                     val createdDate: String = cursor.getString(
                         cursor.getColumnIndex(
@@ -273,6 +298,7 @@ class SQLiteHelper(context: Context) :
                             title = title,
                             description = description,
                             country = country,
+                            countryCode = countryCode,
                             path = path,
                             createdDate = createdDate
                         )

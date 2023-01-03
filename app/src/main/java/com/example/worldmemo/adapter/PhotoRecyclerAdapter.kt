@@ -79,7 +79,7 @@ class PhotoRecyclerAdapter(
         holder.titleView.text = curPhoto.title
         holder.descriptionView.text = curPhoto.description
 
-        loadFlag(curPhoto.country, holder.countryFlag)
+        loadFlag(curPhoto.countryCode, holder.countryFlag)
 
         holder.imageView.setImageURI(Uri.parse(curPhoto.path))
 

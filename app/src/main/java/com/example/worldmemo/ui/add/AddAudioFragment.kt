@@ -26,7 +26,8 @@ class AddAudioFragment : Fragment() {
     private lateinit var sentenceInput: EditText
     private lateinit var translationInput: EditText
     private lateinit var spinner: Spinner
-    private lateinit var countryInput: String
+    private lateinit var countryName: String
+    private lateinit var countryCode: String
     private lateinit var startRecordButton: Button
     private lateinit var stopRecordButton: Button
     private lateinit var playRecordButton: Button
@@ -88,7 +89,7 @@ class AddAudioFragment : Fragment() {
         val addButton: Button = view.findViewById(R.id.add_country_button)
 
         val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
-            requireActivity(), android.R.layout.simple_spinner_item, Countries.getKeys()
+            requireActivity(), android.R.layout.simple_spinner_item, Countries.getCountries()
         )
 
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -98,16 +99,19 @@ class AddAudioFragment : Fragment() {
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 Log.println(Log.DEBUG, "drop down add audio", "nothing has been selected")
-                countryInput = ""
+                countryName = ""
+                countryCode= ""
             }
 
             override fun onItemSelected(
                 parent: AdapterView<*>?, view: View?, position: Int, id: Long
             ) {
 
-                val countryName = parent!!.getItemAtPosition(position).toString()
+                val country =parent!!.getItemAtPosition(position).toString()
 
-                countryInput = Countries.getCountryCode(countryName)
+                countryName = country
+                countryCode = Countries.getCountryCode(country)
+
             }
 
         }
@@ -248,7 +252,7 @@ class AddAudioFragment : Fragment() {
         val sentence = sentenceInput.text.toString()
         val translation = translationInput.text.toString()
 
-        if (sentence.isEmpty() || translation.isEmpty() || countryInput.isEmpty()) {
+        if (sentence.isEmpty() || translation.isEmpty() || countryCode.isEmpty()|| countryName.isEmpty()) {
             Toast.makeText(requireActivity(), "Please, enter all the fields", Toast.LENGTH_SHORT)
                 .show()
             return
@@ -261,7 +265,7 @@ class AddAudioFragment : Fragment() {
 
 
         val audio = AudioModel(
-            sentence = sentence, translation = translation, country = countryInput, path = path
+            sentence = sentence, translation = translation, country = countryName, countryCode =  countryCode, path = path
         )
 
         val status = sqLiteHelper.addAudio(audio)
