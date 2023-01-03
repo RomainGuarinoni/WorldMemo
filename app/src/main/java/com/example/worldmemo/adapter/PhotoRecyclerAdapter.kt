@@ -91,6 +91,14 @@ class PhotoRecyclerAdapter(
         }
     }
 
+    /**
+     * update the list based on a filtered list
+     */
+    fun setFilteredListPhoto(filteredList: ArrayList<PhotoModel>) {
+        photos = filteredList
+        setFilteredList(filteredList)
+    }
+
 
     fun shareSelected() {
         if (selectedItemsPosition.size == 1) shareOneImage()

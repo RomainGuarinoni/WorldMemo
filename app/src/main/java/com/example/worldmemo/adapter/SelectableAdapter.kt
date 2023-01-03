@@ -85,8 +85,10 @@ abstract class SelectableAdapter<T : RecyclerView.ViewHolder, U>(
     /**
      * update the list based on a filtered list
      */
-    fun setFilteredList(filteredList: ArrayList<U>) {
+     fun setFilteredList(filteredList: ArrayList<U>) {
+
         list = filteredList
+
         notifyDataSetChanged()
     }
 

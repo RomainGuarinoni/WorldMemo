@@ -193,8 +193,9 @@ class HomeFragment : Fragment() {
         }
 
 
-        audioAdapter.setFilteredList(filteredAudioList)
-        photoAdapter.setFilteredList(filteredPhotoList)
+        audioAdapter.setFilteredListAudio(filteredAudioList)
+        photoAdapter.setFilteredListPhoto(filteredPhotoList)
+
 
 
     }

@@ -89,6 +89,14 @@ class AudioRecyclerAdapter(
         setCardBackgroundColor(position, cardView)
     }
 
+    /**
+     * update the list based on a filtered list
+     */
+    fun setFilteredListAudio(filteredList: ArrayList<AudioModel>) {
+        audios = filteredList
+        setFilteredList(filteredList)
+    }
+
 
     fun shareSelected() {
         val fileUris: ArrayList<Uri> = ArrayList()
