@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_no_internet"
+        android:title="NoInternet"
+        android:visible="false"
+        android:icon="@drawable/ic_no_internet_24"
+        app:showAsAction="always" />
+</menu>

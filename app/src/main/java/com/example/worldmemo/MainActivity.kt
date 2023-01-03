@@ -1,8 +1,12 @@
 package com.example.worldmemo
 
 import android.Manifest
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -13,12 +17,14 @@ import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
+import com.example.worldmemo.broadcast.AirplaneReceiver
 import com.example.worldmemo.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity(), ImageLoaderFactory {
 
     private lateinit var binding: ActivityMainBinding
+    private val airplaneReceiver = AirplaneReceiver()
 
     private val requestMultiplePermissions = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -67,6 +73,38 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
             navView.selectedItemId = R.id.navigation_add
             navController.navigate(R.id.addPhotoFragment)
         }
+
+        // handle broadcast receiver
+
+
+        this.registerReceiver(airplaneReceiver, airplaneReceiver.intentFilter)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_no_internet -> {
+                startActivity(Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS))
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+
+        menuInflater.inflate(R.menu.airplane, menu)
+
+        val noInternetMenuItem: MenuItem = menu!!.findItem(R.id.action_no_internet)
+
+        this.airplaneReceiver.addMenuItem(noInternetMenuItem)
+
+        if (airplaneReceiver.isAirplaneModeOn(this)) {
+            noInternetMenuItem.isVisible = true
+        }
+
+        return true
     }
 
     override fun onSupportNavigateUp(): Boolean {
