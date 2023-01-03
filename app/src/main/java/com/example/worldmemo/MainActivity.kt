@@ -1,6 +1,5 @@
 package com.example.worldmemo
 
-import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
@@ -20,6 +19,7 @@ import coil.memory.MemoryCache
 import com.example.worldmemo.broadcast.NetworkReceiver
 import com.example.worldmemo.databinding.ActivityMainBinding
 import com.example.worldmemo.utils.NetworkUtils
+import com.example.worldmemo.utils.PermissionUtils
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity(), ImageLoaderFactory {
@@ -32,15 +32,9 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
     ) { permissions ->
         permissions.entries.forEach {
             Log.d("DEBUG", "${it.key} = ${it.value}")
-            //TODO make this better
         }
     }
 
-    private val permissions = arrayOf(
-        Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +57,7 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
         navView.setupWithNavController(navController)
 
 
-        requestMultiplePermissions.launch(permissions)
+        requestMultiplePermissions.launch(PermissionUtils(this).permissions)
 
         // Redirect the user in case an intent is received on the app opening
         val intent = intent
@@ -76,8 +70,6 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
         }
 
         // handle broadcast receiver
-
-
         networkReceiver.intentFilter.forEach {
             this.registerReceiver(networkReceiver, it)
         }
@@ -103,7 +95,7 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
 
         this.networkReceiver.addMenuItem(noInternetMenuItem)
 
-        val isConnected:Boolean = if(NetworkUtils.isAirplaneModeOn(this)){
+        val isConnected: Boolean = if (NetworkUtils.isAirplaneModeOn(this)) {
             false
         } else NetworkUtils.isInternetAvailable(this)
 
