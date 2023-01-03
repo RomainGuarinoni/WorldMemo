@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".ImageActivity">
 
-    <ImageView
+    <com.ortiz.touchview.TouchImageView
         android:id="@+id/fullScreenImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

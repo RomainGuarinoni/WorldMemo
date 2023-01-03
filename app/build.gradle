@@ -54,5 +54,6 @@ dependencies {
     // https://mvnrepository.com/artifact/io.coil-kt/coil
     implementation("io.coil-kt:coil:2.2.2")
     implementation 'com.github.Dhaval2404:ImagePicker:v2.1'
+    implementation 'com.github.MikeOrtiz:TouchImageView:1.4.1'
 
 }
