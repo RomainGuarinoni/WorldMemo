@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment
 import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.model.AudioModel
-import com.example.worldmemo.utils.Countries
+import com.example.worldmemo.utils.CountriesUtils
 import com.example.worldmemo.utils.FileUtils
 import java.io.File
 import java.io.IOException
@@ -89,7 +89,7 @@ class AddAudioFragment : Fragment() {
         val addButton: Button = view.findViewById(R.id.add_country_button)
 
         val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
-            requireActivity(), android.R.layout.simple_spinner_item, Countries.getCountries()
+            requireActivity(), android.R.layout.simple_spinner_item, CountriesUtils.getCountries()
         )
 
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -110,7 +110,7 @@ class AddAudioFragment : Fragment() {
                 val country =parent!!.getItemAtPosition(position).toString()
 
                 countryName = country
-                countryCode = Countries.getCountryCode(country)
+                countryCode = CountriesUtils.getCountryCode(country)
 
             }
 

@@ -17,14 +17,15 @@ import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
-import com.example.worldmemo.broadcast.AirplaneReceiver
+import com.example.worldmemo.broadcast.NetworkReceiver
 import com.example.worldmemo.databinding.ActivityMainBinding
+import com.example.worldmemo.utils.NetworkUtils
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity(), ImageLoaderFactory {
 
     private lateinit var binding: ActivityMainBinding
-    private val airplaneReceiver = AirplaneReceiver()
+    private val networkReceiver = NetworkReceiver()
 
     private val requestMultiplePermissions = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -77,7 +78,9 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
         // handle broadcast receiver
 
 
-        this.registerReceiver(airplaneReceiver, airplaneReceiver.intentFilter)
+        networkReceiver.intentFilter.forEach {
+            this.registerReceiver(networkReceiver, it)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -98,9 +101,13 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
 
         val noInternetMenuItem: MenuItem = menu!!.findItem(R.id.action_no_internet)
 
-        this.airplaneReceiver.addMenuItem(noInternetMenuItem)
+        this.networkReceiver.addMenuItem(noInternetMenuItem)
 
-        if (airplaneReceiver.isAirplaneModeOn(this)) {
+        val isConnected:Boolean = if(NetworkUtils.isAirplaneModeOn(this)){
+            false
+        } else NetworkUtils.isInternetAvailable(this)
+
+        if (!isConnected) {
             noInternetMenuItem.isVisible = true
         }
 

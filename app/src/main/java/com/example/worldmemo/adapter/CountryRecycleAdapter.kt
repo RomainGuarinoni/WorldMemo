@@ -13,7 +13,7 @@ import coil.load
 import com.example.worldmemo.R
 import com.example.worldmemo.model.CountryModel
 import com.example.worldmemo.ui.country.CountriesFragmentDirections
-import com.example.worldmemo.utils.Countries
+import com.example.worldmemo.utils.CountriesUtils
 
 class CountryRecycleAdapter(
     private val country: MutableList<CountryModel>,
@@ -53,7 +53,7 @@ class CountryRecycleAdapter(
 
         holder.countryName.text = curCountry.name
 
-        holder.countryFlag.load(Countries.getCountryUrl(curCountry.code)) {
+        holder.countryFlag.load(CountriesUtils.getCountryUrl(curCountry.code)) {
             placeholder(R.drawable.ic_image)
         }
     }

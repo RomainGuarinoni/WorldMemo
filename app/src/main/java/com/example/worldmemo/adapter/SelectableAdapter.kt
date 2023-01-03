@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.request.CachePolicy
 import com.example.worldmemo.R
-import com.example.worldmemo.utils.Countries
+import com.example.worldmemo.utils.CountriesUtils
 
 /**
  * This class is the base class for the adapter that handle a selectable list
@@ -61,7 +61,7 @@ abstract class SelectableAdapter<T : RecyclerView.ViewHolder, U>(
      * Load the country's flag into an image view
      */
     fun loadFlag(country: String, imageView: ImageView) {
-        imageView.load(Countries.getCountryUrl(country)) {
+        imageView.load(CountriesUtils.getCountryUrl(country)) {
             placeholder(R.drawable.ic_image)
             error(R.drawable.ic_image)
             memoryCachePolicy(CachePolicy.ENABLED)

@@ -1,6 +1,6 @@
 package com.example.worldmemo.utils
 
-object Countries {
+object CountriesUtils {
     private val countryhashmap = HashMap<String, String>()
 
     init {

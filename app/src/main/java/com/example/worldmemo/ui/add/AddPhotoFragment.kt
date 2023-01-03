@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment
 import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.model.PhotoModel
-import com.example.worldmemo.utils.Countries
+import com.example.worldmemo.utils.CountriesUtils
 import com.example.worldmemo.utils.FileUtils
 import com.github.dhaval2404.imagepicker.ImagePicker
 import java.io.File
@@ -73,7 +73,7 @@ class AddPhotoFragment : Fragment() {
 
 
         val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
-            requireActivity(), android.R.layout.simple_spinner_item, Countries.getCountries()
+            requireActivity(), android.R.layout.simple_spinner_item, CountriesUtils.getCountries()
         )
 
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -93,7 +93,7 @@ class AddPhotoFragment : Fragment() {
                 val country = parent!!.getItemAtPosition(position).toString()
 
                 countryName = country
-                countryCode = Countries.getCountryCode(country)
+                countryCode = CountriesUtils.getCountryCode(country)
             }
 
         }
