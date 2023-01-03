@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.model.PhotoModel
+import com.example.worldmemo.utils.Countries
 import com.example.worldmemo.utils.FileUtils
 import com.github.dhaval2404.imagepicker.ImagePicker
 import java.io.File
@@ -70,15 +71,13 @@ class AddPhotoFragment : Fragment() {
         val takePictureButton: Button = view.findViewById(R.id.take_photo_button)
 
 
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter.createFromResource(
-            requireActivity(), R.array.countries_name, android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            // Specify the layout to use when the list of choices appears
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Apply the adapter to the spinner
-            spinner.adapter = adapter
-        }
+        val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            requireActivity(), android.R.layout.simple_spinner_item, Countries.getKeys()
+        )
+
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        spinner.adapter = spinnerAdapter
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -89,7 +88,9 @@ class AddPhotoFragment : Fragment() {
             override fun onItemSelected(
                 parent: AdapterView<*>?, view: View?, position: Int, id: Long
             ) {
-                countryInput = parent!!.getItemAtPosition(position).toString()
+                val countryName = parent!!.getItemAtPosition(position).toString()
+
+                countryInput = Countries.getCountryCode(countryName)
             }
 
         }

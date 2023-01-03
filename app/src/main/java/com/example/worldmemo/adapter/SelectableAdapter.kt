@@ -5,6 +5,7 @@ import android.widget.ImageView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import coil.request.CachePolicy
 import com.example.worldmemo.R
 
 /**
@@ -30,10 +31,6 @@ abstract class SelectableAdapter<T : RecyclerView.ViewHolder, U>(
      */
     var selectedItemsPosition = ArrayList<Int>()
 
-    /**
-     * The Base URL for the flag api
-     */
-    private val baseUrl = "https://countryflagsapi.com/png/"
 
     /**
      * Add or remove an item from the selected list depending
@@ -63,8 +60,10 @@ abstract class SelectableAdapter<T : RecyclerView.ViewHolder, U>(
      * Load the country's flag into an image view
      */
     fun loadFlag(country: String, imageView: ImageView) {
-        imageView.load(baseUrl + country) {
+        imageView.load(getUrl(country)) {
             placeholder(R.drawable.ic_image)
+            error(R.drawable.ic_image)
+            memoryCachePolicy(CachePolicy.ENABLED)
         }
 
     }
@@ -85,7 +84,7 @@ abstract class SelectableAdapter<T : RecyclerView.ViewHolder, U>(
     /**
      * update the list based on a filtered list
      */
-     fun setFilteredList(filteredList: ArrayList<U>) {
+    fun setFilteredList(filteredList: ArrayList<U>) {
 
         list = filteredList
 
@@ -114,6 +113,10 @@ abstract class SelectableAdapter<T : RecyclerView.ViewHolder, U>(
 
     override fun getItemCount(): Int {
         return list.size
+    }
+
+    private fun getUrl(code:String):String{
+        return "https://flagpedia.net/data/flags/w580/${code.lowercase()}.jpg"
     }
 
     interface Callbacks<U> {
