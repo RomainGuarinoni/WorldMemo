@@ -1,8 +1,9 @@
 package com.example.worldmemo.utils
 
 object Countries {
-    private val countryhashmap = HashMap<String,String>()
-    init{
+    private val countryhashmap = HashMap<String, String>()
+
+    init {
         countryhashmap["Afghanistan"] = "AF"
         countryhashmap["Åland Islands"] = "AX"
         countryhashmap["Albania"] = "AL"
@@ -254,14 +255,18 @@ object Countries {
         countryhashmap["Zimbabwe"] = "ZW"
     }
 
-    fun getKeys():List<String>{
+    fun getKeys(): List<String> {
         val keys = this.countryhashmap.keys.toList()
 
         return keys.sorted()
 
     }
 
-    fun getCountryCode(country:String):String{
-        return this.countryhashmap[country]?:""
+    fun getCountryCode(country: String): String {
+        return this.countryhashmap[country] ?: ""
+    }
+
+    fun getCountryUrl(code: String): String {
+        return "https://flagpedia.net/data/flags/w580/${code.lowercase()}.jpg"
     }
 }

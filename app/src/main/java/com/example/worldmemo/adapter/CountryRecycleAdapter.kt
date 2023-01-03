@@ -1,7 +1,6 @@
 package com.example.worldmemo.adapter
 
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +13,7 @@ import coil.load
 import com.example.worldmemo.R
 import com.example.worldmemo.model.CountryModel
 import com.example.worldmemo.ui.country.CountriesFragmentDirections
+import com.example.worldmemo.utils.Countries
 
 class CountryRecycleAdapter(
     private val country: MutableList<CountryModel>,
@@ -53,13 +53,11 @@ class CountryRecycleAdapter(
 
         holder.countryName.text = curCountry.name
 
-        val key = holder.countryFlag.load(baseUrl + curCountry.name) {
+        holder.countryFlag.load(Countries.getCountryUrl(curCountry.name)) {
             placeholder(R.drawable.ic_image)
         }
-
-
-
     }
+
 
     override fun getItemCount(): Int {
         return country.size
