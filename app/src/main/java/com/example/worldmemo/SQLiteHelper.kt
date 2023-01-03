@@ -3,6 +3,7 @@ package com.example.worldmemo
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
@@ -198,7 +199,7 @@ class SQLiteHelper(context: Context) :
     fun getAudiosByCountry(countryName: String): ArrayList<AudioModel> {
         val result = ArrayList<AudioModel>()
         val selectQuery =
-            "SELECT * FROM $TBL_AUDIO WHERE $COUNTRY_COL = '$countryName' ORDER BY $CREATED_DATE_COL DESC"
+            "SELECT * FROM $TBL_AUDIO WHERE $COUNTRY_COL = ${DatabaseUtils.sqlEscapeString(countryName)} ORDER BY $CREATED_DATE_COL DESC"
         val db = this.readableDatabase
         val cursor: Cursor?
 
@@ -245,7 +246,7 @@ class SQLiteHelper(context: Context) :
     fun getPhotosByCountry(countryName: String): ArrayList<PhotoModel> {
         val result = ArrayList<PhotoModel>()
         val selectQuery =
-            "SELECT * FROM $TBL_PHOTO WHERE $COUNTRY_COL = '$countryName' ORDER BY $CREATED_DATE_COL DESC"
+            "SELECT * FROM $TBL_PHOTO WHERE $COUNTRY_COL = ${DatabaseUtils.sqlEscapeString(countryName)} ORDER BY $CREATED_DATE_COL DESC"
         val db = this.readableDatabase
         val cursor: Cursor?
 

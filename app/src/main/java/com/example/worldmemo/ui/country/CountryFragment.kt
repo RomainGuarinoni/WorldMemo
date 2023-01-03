@@ -49,12 +49,10 @@ class CountryFragment : Fragment() {
         countryName = args.countryName
 
 
-        val escapedCountryName = escapeString(countryName)
 
-        Log.d("country Name", countryName)
 
-        audioList = sqliteHelper.getAudiosByCountry(escapedCountryName)
-        photoList = sqliteHelper.getPhotosByCountry(escapedCountryName)
+        audioList = sqliteHelper.getAudiosByCountry(countryName)
+        photoList = sqliteHelper.getPhotosByCountry(countryName)
 
         // Get the UI views
         val searchView = binding.searchView
@@ -195,20 +193,6 @@ class CountryFragment : Fragment() {
 
     }
 
-    fun escapeString(string: String): String {
-        var finalString = ""
-
-        string.forEach {
-
-            if (it.toString()=="'") {
-                finalString += "''"
-            } else {
-                finalString += it
-            }
-        }
-
-        return finalString
-    }
 
 
 }
