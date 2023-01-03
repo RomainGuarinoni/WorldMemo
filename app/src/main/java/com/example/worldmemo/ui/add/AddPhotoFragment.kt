@@ -137,8 +137,6 @@ class AddPhotoFragment : Fragment() {
             imagePreview.setImageURI(uri)
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
             Toast.makeText(requireActivity(), ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(requireActivity(), "Task Cancelled", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -175,6 +173,7 @@ class AddPhotoFragment : Fragment() {
         }
 
         uri = null
+        imagePreview.setImageURI(null)
 
     }
 
