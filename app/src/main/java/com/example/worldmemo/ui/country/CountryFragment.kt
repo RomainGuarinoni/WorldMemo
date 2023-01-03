@@ -119,6 +119,12 @@ class CountryFragment : Fragment() {
         recycleView.layoutManager = LinearLayoutManager(context)
         recycleView.adapter = audioAdapter
 
+        if(audioList.size == 0 && photoList.size>0){
+            recycleView.adapter = photoAdapter
+            currentTab = PHOTO_TAB
+            tabLayout.getTabAt(PHOTO_TAB)?.select()
+        }
+
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 if (tabLayout.selectedTabPosition == AUDIO_TAB) {
