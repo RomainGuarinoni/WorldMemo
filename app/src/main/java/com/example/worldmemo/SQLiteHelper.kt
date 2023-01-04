@@ -316,6 +316,122 @@ class SQLiteHelper(context: Context) :
         return result
     }
 
+    fun getAudioById(audioId: String): AudioModel? {
+        val result: AudioModel
+        val selectQuery = "SELECT * FROM $TBL_AUDIO WHERE $ID_COL = '$audioId'"
+        val db = this.readableDatabase
+        val cursor: Cursor?
+        try {
+            cursor = db.rawQuery(selectQuery, null)
+
+            if (cursor.moveToFirst()) {
+                val id: String = cursor.getString(cursor.getColumnIndex(ID_COL))
+                val sentence: String = cursor.getString(cursor.getColumnIndex(SENTENCE_COL))
+                val translation: String = cursor.getString(cursor.getColumnIndex(TRANSLATION_COL))
+                val country: String = cursor.getString(cursor.getColumnIndex(COUNTRY_COL))
+                val countryCode: String = cursor.getString(cursor.getColumnIndex(COUNTRY_CODE_COL))
+                val path: String = cursor.getString(cursor.getColumnIndex(PATH_COL))
+                val createdDate: String = cursor.getString(
+                    cursor.getColumnIndex(
+                        CREATED_DATE_COL
+                    )
+                )
+                result = AudioModel(
+                    id = id,
+                    sentence = sentence,
+                    translation = translation,
+                    country = country,
+                    countryCode = countryCode,
+                    path = path,
+                    createdDate = createdDate
+                )
+
+                return result
+
+            }
+            cursor.close()
+
+        } catch (e: Exception) {
+            Log.println(Log.ERROR, "sql get all photos by country name", "An error happened")
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    fun getPhotoById(photoId: String): PhotoModel? {
+        val result: PhotoModel
+        val selectQuery = "SELECT * FROM $TBL_PHOTO WHERE $ID_COL = '$photoId'"
+        val db = this.readableDatabase
+        val cursor: Cursor?
+        try {
+            cursor = db.rawQuery(selectQuery, null)
+
+            if (cursor.moveToFirst()) {
+                val id: String = cursor.getString(cursor.getColumnIndex(ID_COL))
+                val title: String = cursor.getString(cursor.getColumnIndex(TITLE_COL))
+                val description: String = cursor.getString(cursor.getColumnIndex(DESCRIPTION_COL))
+                val country: String = cursor.getString(cursor.getColumnIndex(COUNTRY_COL))
+                val countryCode: String = cursor.getString(cursor.getColumnIndex(COUNTRY_CODE_COL))
+                val path: String = cursor.getString(cursor.getColumnIndex(PATH_COL))
+                val createdDate: String = cursor.getString(
+                    cursor.getColumnIndex(
+                        CREATED_DATE_COL
+                    )
+                )
+                result = PhotoModel(
+                    id = id,
+                    title = title,
+                    description = description,
+                    country = country,
+                    countryCode = countryCode,
+                    path = path,
+                    createdDate = createdDate
+                )
+
+                return result
+
+            }
+            cursor.close()
+
+        } catch (e: Exception) {
+            Log.println(Log.ERROR, "sql get all photos by country name", "An error happened")
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    fun updateAudio(audio: AudioModel): Int {
+        val db = this.writableDatabase
+
+        val newContentValues = ContentValues()
+        newContentValues.put(SENTENCE_COL, audio.sentence)
+        newContentValues.put(TRANSLATION_COL, audio.translation)
+        newContentValues.put(COUNTRY_COL, audio.country)
+        newContentValues.put(COUNTRY_CODE_COL, audio.countryCode)
+        newContentValues.put(PATH_COL, audio.path)
+        newContentValues.put(CREATED_DATE_COL, audio.createdDate)
+
+        val success = db.update(TBL_AUDIO, newContentValues, "$ID_COL = ?", arrayOf(audio.id))
+        db.close()
+        return success
+    }
+
+    fun updatePhoto(photo: PhotoModel): Int {
+        val db = this.writableDatabase
+
+        val newContentValues = ContentValues()
+        newContentValues.put(TITLE_COL, photo.title)
+        newContentValues.put(DESCRIPTION_COL, photo.description)
+        newContentValues.put(COUNTRY_COL, photo.country)
+        newContentValues.put(COUNTRY_CODE_COL, photo.countryCode)
+        newContentValues.put(PATH_COL, photo.path)
+        newContentValues.put(CREATED_DATE_COL, photo.createdDate)
+
+        val success = db.update(TBL_PHOTO, newContentValues, "$ID_COL = ?", arrayOf(photo.id))
+        db.close()
+        return success
+    }
+
     fun deleteAudio(audio: AudioModel): Int {
         val db = this.writableDatabase
 

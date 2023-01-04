@@ -5,14 +5,14 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 data class PhotoModel(
-    val id: String = getUuid(),
+    override val id: String = getUuid(),
     val title: String,
     val description: String,
-    val country: String,
-    val countryCode: String,
-    val path: String,
-    val createdDate: String = getCreatedDate(),
-) {
+    override val country: String,
+    override val countryCode: String,
+    override val path: String,
+    override val createdDate: String = getCreatedDate(),
+) : BaseContentModel() {
     companion object {
         fun getUuid(): String {
             return UUID.randomUUID().toString()

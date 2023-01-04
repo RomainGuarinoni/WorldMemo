@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.model.PhotoModel
@@ -31,9 +32,15 @@ class AddPhotoFragment : Fragment() {
     private lateinit var imagePreview: ImageView
     private var uri: Uri? = null
     private lateinit var sqLiteHelper: SQLiteHelper
+    private lateinit var addButton: Button
 
 
     private var PATH_URI = "path"
+
+    private val args: AddPhotoFragmentArgs by navArgs()
+    private var isUpdateMode = false
+    private var updatePhotoId: String? = null
+    private var updatePhoto: PhotoModel? = null
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -68,7 +75,7 @@ class AddPhotoFragment : Fragment() {
         spinner = view.findViewById(R.id.add_country_select)
         imagePreview = view.findViewById(R.id.add_photo_preview)
 
-        val addButton: Button = view.findViewById(R.id.add_country_button)
+        addButton = view.findViewById(R.id.add_country_button)
         val takePictureButton: Button = view.findViewById(R.id.take_photo_button)
 
 
@@ -128,6 +135,25 @@ class AddPhotoFragment : Fragment() {
             }
         }
 
+
+        // handle a possible update
+        if (args.photoId != null) {
+            updatePhotoId = args.photoId
+            isUpdateMode = true
+            updatePhoto = sqLiteHelper.getPhotoById(updatePhotoId!!)
+
+            titleInput.setText(updatePhoto?.title)
+            descriptionInput.setText(updatePhoto?.description)
+            countryName = updatePhoto?.country ?: ""
+            countryCode = updatePhoto?.countryCode ?: ""
+            spinner.setSelection(CountriesUtils.getPositionCountry(countryName))
+            uri = Uri.parse(updatePhoto?.path) ?: null
+            imagePreview.setImageURI(uri)
+
+            addButton.setText(R.string.button_update)
+
+        }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -162,26 +188,55 @@ class AddPhotoFragment : Fragment() {
         }
 
 
-        val photo = PhotoModel(
-            title = title,
-            description = description,
-            country = countryName,
-            countryCode = countryCode,
-            path = uri.toString()
-        )
+        val status: Long
 
-        val status = sqLiteHelper.addPhoto(photo)
+        if (isUpdateMode) {
+            val photo = PhotoModel(
+                id = updatePhotoId!!,
+                title = title,
+                description = description,
+                country = countryName,
+                countryCode = countryCode,
+                path = uri.toString()
+            )
+            status = sqLiteHelper.updatePhoto(photo).toLong()
+        } else {
+            val photo = PhotoModel(
+                title = title,
+                description = description,
+                country = countryName,
+                countryCode = countryCode,
+                path = uri.toString()
+            )
+            status = sqLiteHelper.addPhoto(photo)
+        }
+
 
         if (status > sqLiteHelper.FAIL_STATUS) {
-            Toast.makeText(requireActivity(), "The photo has been added", Toast.LENGTH_SHORT).show()
+
+            if (isUpdateMode) {
+                Toast.makeText(requireActivity(), "The photo has been updated", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                Toast.makeText(requireActivity(), "The photo has been added", Toast.LENGTH_SHORT)
+                    .show()
+            }
             resetForm()
         } else {
-            Toast.makeText(requireActivity(), "Photo could not be saved ...", Toast.LENGTH_SHORT)
-                .show()
+            if (isUpdateMode) {
+                Toast.makeText(
+                    requireActivity(), "Photo could not be updated ...", Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(
+                    requireActivity(), "Photo could not be saved ...", Toast.LENGTH_SHORT
+                ).show()
+            }
         }
 
         uri = null
         imagePreview.setImageURI(null)
+        addButton.setText(R.string.add)
 
     }
 

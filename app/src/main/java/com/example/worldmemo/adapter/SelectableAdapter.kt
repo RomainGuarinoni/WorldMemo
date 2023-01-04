@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.request.CachePolicy
 import com.example.worldmemo.R
+import com.example.worldmemo.model.BaseContentModel
 import com.example.worldmemo.utils.CountriesUtils
 
 /**
@@ -14,7 +15,7 @@ import com.example.worldmemo.utils.CountriesUtils
  * it provide the functionalities to handle selected items and to delete them
  * and some other utils function used in the adapter list
  */
-abstract class SelectableAdapter<T : RecyclerView.ViewHolder, U>(
+abstract class SelectableAdapter<T : RecyclerView.ViewHolder, U : BaseContentModel>(
     private val callbacks: Callbacks<U>, private var list: MutableList<U>
 ) : RecyclerView.Adapter<T>(
 ) {
@@ -38,6 +39,9 @@ abstract class SelectableAdapter<T : RecyclerView.ViewHolder, U>(
      * on its status (already selected or not)
      */
     fun handleViewClick(cardView: CardView, position: Int): Boolean {
+
+        val oldSize = selectedItemsPosition.size
+
         if (selectedItemsPosition.contains(position)) {
             selectedItemsPosition.remove(position)
             cardView.setCardBackgroundColor(Color.WHITE)
@@ -52,6 +56,15 @@ abstract class SelectableAdapter<T : RecyclerView.ViewHolder, U>(
             isSelectionMode = false
             callbacks.onSelectEnd()
             return false
+        }
+
+        if (selectedItemsPosition.size == 1) {
+            callbacks.onOneItemSelected()
+        }
+
+        // We go from a 1 size selected to an multiple size selected
+        if (oldSize == 1) {
+            callbacks.onMultipleItemSelected()
         }
 
         return true
@@ -112,6 +125,16 @@ abstract class SelectableAdapter<T : RecyclerView.ViewHolder, U>(
         return selectedItemsPosition.size != 0
     }
 
+    fun hasMultipleItemSelected(): Boolean {
+        return selectedItemsPosition.size > 1
+    }
+
+    fun getUpdateId(): String? {
+        if (selectedItemsPosition.size != 1) return null
+
+        return list[selectedItemsPosition[0]].id
+    }
+
     override fun getItemCount(): Int {
         return list.size
     }
@@ -120,6 +143,8 @@ abstract class SelectableAdapter<T : RecyclerView.ViewHolder, U>(
     interface Callbacks<U> {
         fun onSelectStart()
         fun onSelectEnd()
+        fun onOneItemSelected()
+        fun onMultipleItemSelected()
         fun onDelete(item: U)
     }
 

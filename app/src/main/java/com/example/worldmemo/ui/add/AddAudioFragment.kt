@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import com.example.worldmemo.R
 import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.model.AudioModel
@@ -36,11 +37,17 @@ class AddAudioFragment : Fragment() {
     private lateinit var sqLiteHelper: SQLiteHelper
     private var recorder: MediaRecorder? = null
     private var player: MediaPlayer? = null
+    private lateinit var addButton: Button
 
     private var isAudioRecorded = false
 
     private var PATH_KEY = "path"
     private var PATH_IS_AUDIO_RECORDED = "isAudioRecorded"
+
+    private val args: AddAudioFragmentArgs by navArgs()
+    private var isUpdateMode = false
+    private var updateAudioId: String? = null
+    private var updateAudio: AudioModel? = null
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -59,10 +66,7 @@ class AddAudioFragment : Fragment() {
         }
 
         if (isAudioRecorded) {
-            startRecordButton.visibility = Button.INVISIBLE
-            stopRecordButton.visibility = Button.INVISIBLE
-            playRecordButton.visibility = Button.VISIBLE
-            deleteRecordButton.visibility = Button.VISIBLE
+            fromRecordToListenUI()
         }
     }
 
@@ -78,6 +82,7 @@ class AddAudioFragment : Fragment() {
 
         sqLiteHelper = SQLiteHelper(requireActivity())
 
+
         // Get UI element
         sentenceInput = view.findViewById(R.id.add_country_sentence)
         translationInput = view.findViewById(R.id.add_country_translation)
@@ -86,7 +91,7 @@ class AddAudioFragment : Fragment() {
         stopRecordButton = view.findViewById(R.id.add_audio_stop_record_button)
         playRecordButton = view.findViewById(R.id.add_audio_play_record_button)
         deleteRecordButton = view.findViewById(R.id.add_audio_delete_record_button)
-        val addButton: Button = view.findViewById(R.id.add_country_button)
+        addButton = view.findViewById(R.id.add_country_button)
 
         val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
             requireActivity(), android.R.layout.simple_spinner_item, CountriesUtils.getCountries()
@@ -100,14 +105,14 @@ class AddAudioFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 Log.println(Log.DEBUG, "drop down add audio", "nothing has been selected")
                 countryName = ""
-                countryCode= ""
+                countryCode = ""
             }
 
             override fun onItemSelected(
                 parent: AdapterView<*>?, view: View?, position: Int, id: Long
             ) {
 
-                val country =parent!!.getItemAtPosition(position).toString()
+                val country = parent!!.getItemAtPosition(position).toString()
 
                 countryName = country
                 countryCode = CountriesUtils.getCountryCode(country)
@@ -145,14 +150,37 @@ class AddAudioFragment : Fragment() {
 
                 isAudioRecorded = true
 
-                startRecordButton.visibility = Button.INVISIBLE
-                stopRecordButton.visibility = Button.INVISIBLE
-                playRecordButton.visibility = Button.VISIBLE
-                deleteRecordButton.visibility = Button.VISIBLE
+                fromRecordToListenUI()
 
             }
         }
 
+        // handle a possible update
+        if (args.audioId != null) {
+            updateAudioId = args.audioId
+            isUpdateMode = true
+            updateAudio = sqLiteHelper.getAudioById(updateAudioId!!)
+
+            sentenceInput.setText(updateAudio?.sentence)
+            translationInput.setText(updateAudio?.translation)
+            countryName = updateAudio?.country ?: ""
+            countryCode = updateAudio?.countryCode ?: ""
+            spinner.setSelection(CountriesUtils.getPositionCountry(countryName))
+            path = updateAudio?.path ?: ""
+            isAudioRecorded = true
+
+            addButton.setText(R.string.button_update)
+
+            fromRecordToListenUI()
+        }
+
+    }
+
+    private fun fromRecordToListenUI() {
+        startRecordButton.visibility = Button.INVISIBLE
+        stopRecordButton.visibility = Button.INVISIBLE
+        playRecordButton.visibility = Button.VISIBLE
+        deleteRecordButton.visibility = Button.VISIBLE
     }
 
     private fun startRecording() {
@@ -252,7 +280,7 @@ class AddAudioFragment : Fragment() {
         val sentence = sentenceInput.text.toString()
         val translation = translationInput.text.toString()
 
-        if (sentence.isEmpty() || translation.isEmpty() || countryCode.isEmpty()|| countryName.isEmpty()) {
+        if (sentence.isEmpty() || translation.isEmpty() || countryCode.isEmpty() || countryName.isEmpty()) {
             Toast.makeText(requireActivity(), "Please, enter all the fields", Toast.LENGTH_SHORT)
                 .show()
             return
@@ -264,26 +292,51 @@ class AddAudioFragment : Fragment() {
         }
 
 
-        val audio = AudioModel(
-            sentence = sentence, translation = translation, country = countryName, countryCode =  countryCode, path = path
-        )
+        val status: Long
 
-        val status = sqLiteHelper.addAudio(audio)
-
-        if (status > sqLiteHelper.FAIL_STATUS) {
-            Toast.makeText(requireActivity(), "The audio has been added", Toast.LENGTH_SHORT).show()
-            resetForm()
+        if (isUpdateMode) {
+            val audio = AudioModel(
+                id = updateAudioId!!,
+                sentence = sentence,
+                translation = translation,
+                country = countryName,
+                countryCode = countryCode,
+                path = path
+            )
+            status = sqLiteHelper.updateAudio(audio).toLong()
         } else {
-            Toast.makeText(requireActivity(), "Audio could not be saved ...", Toast.LENGTH_SHORT)
-                .show()
+            val audio = AudioModel(
+                sentence = sentence,
+                translation = translation,
+                country = countryName,
+                countryCode = countryCode,
+                path = path
+            )
+            status = sqLiteHelper.addAudio(audio)
         }
 
-        startRecordButton.visibility = Button.VISIBLE
-        stopRecordButton.visibility = Button.INVISIBLE
-        playRecordButton.visibility = Button.INVISIBLE
-        deleteRecordButton.visibility = Button.INVISIBLE
+        if (status > sqLiteHelper.FAIL_STATUS) {
 
-        path = ""
+            if (isUpdateMode) {
+                Toast.makeText(requireActivity(), "The audio has been updated", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                Toast.makeText(requireActivity(), "The audio has been added", Toast.LENGTH_SHORT)
+                    .show()
+            }
+            resetForm()
+        } else {
+            if (isUpdateMode) {
+                Toast.makeText(
+                    requireActivity(), "Audio could not be updated ...", Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(
+                    requireActivity(), "Audio could not be saved ...", Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
 
     }
 
@@ -302,6 +355,20 @@ class AddAudioFragment : Fragment() {
     private fun resetForm() {
         sentenceInput.setText("")
         translationInput.setText("")
+
+        startRecordButton.visibility = Button.VISIBLE
+        stopRecordButton.visibility = Button.INVISIBLE
+        playRecordButton.visibility = Button.INVISIBLE
+        deleteRecordButton.visibility = Button.INVISIBLE
+
+        path = ""
+
+        if (isUpdateMode) {
+            isUpdateMode = false
+            updateAudioId = null
+            updateAudio = null
+            addButton.setText(R.string.add)
+        }
     }
 
 

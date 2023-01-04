@@ -262,6 +262,13 @@ object CountriesUtils {
 
     }
 
+    fun getPositionCountry(country: String): Int {
+        val keys = this.countryhashmap.keys.toList()
+
+        return keys.sorted().indexOf(country)
+
+    }
+
     fun getCountryCode(country: String): String {
         return this.countryhashmap[country] ?: ""
     }

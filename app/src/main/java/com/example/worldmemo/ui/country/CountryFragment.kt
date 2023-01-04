@@ -5,9 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.worldmemo.SQLiteHelper
@@ -60,6 +62,7 @@ class CountryFragment : Fragment() {
         val buttonLayout = binding.countryDeleteButtonView
         val deleteButton = binding.countryDeleteButton
         val shareButton = binding.countryShareButton
+        val updateButton = binding.countryUpdateButton
         val tabLayout = binding.countryTableLayout
 
         // Remove auto focus of the searchView
@@ -94,7 +97,23 @@ class CountryFragment : Fragment() {
             }
         }
 
-        val audioCallbacks = Callbacks<AudioModel>(requireActivity(), buttonLayout) {
+        updateButton.setOnClickListener {
+
+            val action = if (currentTab == AUDIO_TAB) {
+                val selectedId = audioAdapter.getUpdateId()
+
+                CountryFragmentDirections.actionCountryFragmentToAddAudioFragment(selectedId)
+
+            } else {
+                val selectedId = photoAdapter.getUpdateId()
+
+                CountryFragmentDirections.actionCountryFragmentToAddPhotoFragment(selectedId)
+            }
+
+            Navigation.findNavController(root).navigate(action)
+        }
+
+        val audioCallbacks = Callbacks<AudioModel>(requireActivity(), buttonLayout, updateButton) {
             val status = sqliteHelper.deleteAudio(it)
 
             if (status == sqliteHelper.FAIL_STATUS) {
@@ -104,7 +123,7 @@ class CountryFragment : Fragment() {
             }
         }
 
-        val photoCallbacks = Callbacks<PhotoModel>(requireActivity(), buttonLayout) {
+        val photoCallbacks = Callbacks<PhotoModel>(requireActivity(), buttonLayout, updateButton) {
             val status = sqliteHelper.deletePhoto(it)
 
             if (status == sqliteHelper.FAIL_STATUS) {
@@ -114,12 +133,14 @@ class CountryFragment : Fragment() {
             }
         }
 
+
+
         audioAdapter = AudioRecyclerAdapter(audioList, audioCallbacks, requireActivity())
         photoAdapter = PhotoRecyclerAdapter(photoList, photoCallbacks, requireActivity())
         recycleView.layoutManager = LinearLayoutManager(context)
         recycleView.adapter = audioAdapter
 
-        if(audioList.size == 0 && photoList.size>0){
+        if (audioList.size == 0 && photoList.size > 0) {
             recycleView.adapter = photoAdapter
             currentTab = PHOTO_TAB
             tabLayout.getTabAt(PHOTO_TAB)?.select()
@@ -134,9 +155,18 @@ class CountryFragment : Fragment() {
                     if (audioAdapter.hasItemSelected() && buttonLayout.visibility == View.GONE) {
                         // we let the buttons share and deleted visible because there is item selected too
                         audioCallbacks.onSelectStart()
+
+
                     } else if (!audioAdapter.hasItemSelected() && buttonLayout.visibility == View.VISIBLE) {
                         // We hide the buttons because nothing is selected in this tab
                         audioCallbacks.onSelectEnd()
+                    }
+
+                    // We want to hide the update button if there is multiple item selected
+                    if (audioAdapter.hasMultipleItemSelected() && updateButton.visibility == Button.VISIBLE) {
+                        audioCallbacks.onMultipleItemSelected()
+                    } else if (!audioAdapter.hasMultipleItemSelected() && updateButton.visibility == Button.GONE) {
+                        audioCallbacks.onOneItemSelected()
                     }
 
                 } else if (tabLayout.selectedTabPosition == PHOTO_TAB) {
@@ -147,9 +177,17 @@ class CountryFragment : Fragment() {
                     if (photoAdapter.hasItemSelected() && buttonLayout.visibility == View.GONE) {
                         // we let the buttons share and deleted visible because there is item selected too
                         audioCallbacks.onSelectStart()
+
                     } else if (!photoAdapter.hasItemSelected() && buttonLayout.visibility == View.VISIBLE) {
                         // We hide the buttons because nothing is selected in this tab
                         audioCallbacks.onSelectEnd()
+                    }
+
+                    // We want to hide the update button if there is multiple item selected
+                    if (photoAdapter.hasMultipleItemSelected() && updateButton.visibility == Button.VISIBLE) {
+                        audioCallbacks.onMultipleItemSelected()
+                    } else if (!photoAdapter.hasMultipleItemSelected() && updateButton.visibility == Button.GONE) {
+                        audioCallbacks.onOneItemSelected()
                     }
 
                 }
@@ -198,7 +236,6 @@ class CountryFragment : Fragment() {
         photoAdapter.setFilteredListPhoto(filteredPhotoList)
 
     }
-
 
 
 }

@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
         networkReceiver.intentFilter.forEach {
             this.registerReceiver(networkReceiver, it)
         }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

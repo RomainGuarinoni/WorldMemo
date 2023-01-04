@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import com.example.worldmemo.R
 import com.example.worldmemo.databinding.FragmentAddBinding
 import com.example.worldmemo.utils.PermissionUtils
 
@@ -18,7 +17,7 @@ class AddFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private lateinit var permissionUtils:PermissionUtils
+    private lateinit var permissionUtils: PermissionUtils
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -52,8 +51,9 @@ class AddFragment : Fragment() {
                 permissionUtils.isPermissionAllowed(permissionUtils.PERMISSION_READ_STORAGE)
 
             if (audioPermission && writePermission && readPermission) {
-                Navigation.findNavController(view)
-                    .navigate(R.id.action_navigation_add_to_addAudioFragment)
+                val action = AddFragmentDirections.actionNavigationAddToAddAudioFragment(null)
+
+                Navigation.findNavController(view).navigate(action)
             } else {
                 Toast.makeText(
                     requireActivity(),
@@ -71,8 +71,9 @@ class AddFragment : Fragment() {
                 permissionUtils.isPermissionAllowed(permissionUtils.PERMISSION_READ_STORAGE)
 
             if (writePermission && readPermission) {
-                Navigation.findNavController(view)
-                    .navigate(R.id.action_navigation_add_to_addPhotoFragment)
+                val action = AddFragmentDirections.actionNavigationAddToAddPhotoFragment(null)
+
+                Navigation.findNavController(view).navigate(action)
             } else {
                 Toast.makeText(
                     requireActivity(),

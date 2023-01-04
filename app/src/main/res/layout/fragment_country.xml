@@ -72,6 +72,13 @@
                 android:text="@string/button_delete" />
 
             <Button
+                android:id="@+id/country_update_button"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="10dp"
+                android:text="@string/button_update" />
+
+            <Button
                 android:id="@+id/country_share_button"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"

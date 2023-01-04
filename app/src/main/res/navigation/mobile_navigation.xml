@@ -9,7 +9,14 @@
         android:id="@+id/navigation_home"
         android:name="com.example.worldmemo.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_addPhotoFragment2"
+            app:destination="@id/addPhotoFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_addAudioFragment"
+            app:destination="@id/addAudioFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_add"
@@ -41,6 +48,10 @@
         <action
             android:id="@+id/action_addAudioFragment_to_navigation_add"
             app:destination="@id/navigation_add" />
+        <argument
+            android:name="audioId"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/countryFragment"
@@ -49,6 +60,12 @@
         <argument
             android:name="country_name"
             app:argType="string" />
+        <action
+            android:id="@+id/action_countryFragment_to_addPhotoFragment"
+            app:destination="@id/addPhotoFragment" />
+        <action
+            android:id="@+id/action_countryFragment_to_addAudioFragment"
+            app:destination="@id/addAudioFragment" />
     </fragment>
     <fragment
         android:id="@+id/addPhotoFragment"
@@ -58,5 +75,9 @@
         <action
             android:id="@+id/action_addPhotoFragment_to_navigation_add"
             app:destination="@id/navigation_add" />
+        <argument
+            android:name="photoId"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 </navigation>
