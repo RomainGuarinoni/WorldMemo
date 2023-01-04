@@ -123,7 +123,7 @@ class AddPhotoFragment : Fragment() {
         // Handle a possible intent
         val intent = requireActivity().intent
 
-        if (intent.type != null && intent.type!!.startsWith("image/")) {
+        if (intent.type?.startsWith("image/") == true) {
             (intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as? Uri)?.let {
 
                 val filePath =
@@ -238,6 +238,13 @@ class AddPhotoFragment : Fragment() {
         imagePreview.setImageURI(null)
         addButton.setText(R.string.add)
 
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (requireActivity().intent.type?.contains("image/") == true) {
+            requireActivity().intent = Intent()
+        }
     }
 
     private fun resetForm() {

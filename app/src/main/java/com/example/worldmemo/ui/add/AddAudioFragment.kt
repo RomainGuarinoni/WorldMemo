@@ -141,17 +141,12 @@ class AddAudioFragment : Fragment() {
         // Handle a possible intent
         val intent = requireActivity().intent
 
-        if (intent.type != null && intent.type!!.startsWith("audio/")) {
+        if (intent.type?.startsWith("audio/") == true) {
             (intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as? Uri)?.let {
-
-
                 path = FileUtils.saveUriToFile(requireActivity(), it, FileUtils.FileType.AUDIO)
-
-
                 isAudioRecorded = true
 
                 fromRecordToListenUI()
-
             }
         }
 
@@ -230,8 +225,6 @@ class AddAudioFragment : Fragment() {
     }
 
     private fun playAudio() {
-
-
         player = MediaPlayer().apply {
             try {
                 setDataSource(path)
@@ -244,8 +237,6 @@ class AddAudioFragment : Fragment() {
 
             }
         }
-
-
     }
 
     private fun deleteAudio() {
@@ -348,6 +339,10 @@ class AddAudioFragment : Fragment() {
 
         player = null
         recorder = null
+
+        if (requireActivity().intent.type?.contains("audio/") == true) {
+            requireActivity().intent = Intent()
+        }
 
     }
 
