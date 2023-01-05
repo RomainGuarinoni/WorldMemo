@@ -8,7 +8,7 @@ import com.example.worldmemo.utils.NotificationUtils
 
 class NotificationReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        NotificationUtils(context).createNotification(intent)
+        NotificationUtils(context).createNotification()
     }
 
 }

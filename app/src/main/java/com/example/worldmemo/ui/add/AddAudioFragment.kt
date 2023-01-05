@@ -67,7 +67,6 @@ class AddAudioFragment : Fragment() {
         }
 
         if (isAudioRecorded) {
-            Log.e("should not be here","etdf")
             fromRecordToListenUI()
         }
     }
