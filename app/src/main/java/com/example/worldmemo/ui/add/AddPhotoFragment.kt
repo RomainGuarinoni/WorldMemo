@@ -176,7 +176,7 @@ class AddPhotoFragment : Fragment() {
         val title = titleInput.text.toString()
         val description = descriptionInput.text.toString()
 
-        if (title.isEmpty() || description.isEmpty() || countryCode.isEmpty() || countryName.isEmpty()) {
+        if (title.isEmpty() || countryCode.isEmpty() || countryName.isEmpty()) {
             Toast.makeText(requireActivity(), "Please, enter all the fields", Toast.LENGTH_SHORT)
                 .show()
             return
