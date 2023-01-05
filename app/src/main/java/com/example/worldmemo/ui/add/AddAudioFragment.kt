@@ -18,6 +18,7 @@ import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.model.AudioModel
 import com.example.worldmemo.utils.CountriesUtils
 import com.example.worldmemo.utils.FileUtils
+import com.example.worldmemo.utils.NotificationUtils
 import java.io.File
 import java.io.IOException
 
@@ -315,6 +316,9 @@ class AddAudioFragment : Fragment() {
                 Toast.makeText(requireActivity(), "The audio has been added", Toast.LENGTH_SHORT)
                     .show()
             }
+
+            NotificationUtils(requireActivity()).scheduleNotification()
+
             resetForm()
         } else {
             if (isUpdateMode) {

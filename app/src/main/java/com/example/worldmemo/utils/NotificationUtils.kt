@@ -1,11 +1,15 @@
 package com.example.worldmemo.utils
 
+import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.example.worldmemo.R
+import com.example.worldmemo.broadcast.NotificationReceiver
+
 
 class NotificationUtils(private val context: Context) {
 
@@ -17,6 +21,8 @@ class NotificationUtils(private val context: Context) {
 
     private val title = "title"
     private val message = "message"
+
+    val INTERVAL_MS = 60000L
 
     fun createNotificationChannel() {
         val channel = NotificationChannel(
@@ -39,5 +45,22 @@ class NotificationUtils(private val context: Context) {
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.notify(1, notification)
     }
+
+    fun scheduleNotification() {
+        val intent = Intent(context, NotificationReceiver::class.java)
+        intent.putExtra(title, "Add something new !")
+        intent.putExtra(message, "It's been a while that you didn't had something in the app, go find a new audio or image to add !!")
+        val pendingIntent = PendingIntent.getBroadcast(
+            context, 1, intent, PendingIntent.FLAG_MUTABLE
+        )
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(pendingIntent);
+
+
+        alarmManager.set(
+            AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + INTERVAL_MS, pendingIntent
+        );
+    }
+
 
 }
