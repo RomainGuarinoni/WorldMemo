@@ -18,6 +18,7 @@ import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.model.PhotoModel
 import com.example.worldmemo.utils.CountriesUtils
 import com.example.worldmemo.utils.FileUtils
+import com.example.worldmemo.utils.NotificationUtils
 import com.github.dhaval2404.imagepicker.ImagePicker
 import java.io.File
 
@@ -212,17 +213,7 @@ class AddPhotoFragment : Fragment() {
         }
 
 
-        if (status > sqLiteHelper.FAIL_STATUS) {
-
-            if (isUpdateMode) {
-                Toast.makeText(requireActivity(), "The photo has been updated", Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                Toast.makeText(requireActivity(), "The photo has been added", Toast.LENGTH_SHORT)
-                    .show()
-            }
-            resetForm()
-        } else {
+        if (status <= sqLiteHelper.FAIL_STATUS) {
             if (isUpdateMode) {
                 Toast.makeText(
                     requireActivity(), "Photo could not be updated ...", Toast.LENGTH_SHORT
@@ -232,11 +223,20 @@ class AddPhotoFragment : Fragment() {
                     requireActivity(), "Photo could not be saved ...", Toast.LENGTH_SHORT
                 ).show()
             }
+            return
         }
 
-        uri = null
-        imagePreview.setImageURI(null)
-        addButton.setText(R.string.add)
+        if (isUpdateMode) {
+            Toast.makeText(requireActivity(), "The photo has been updated", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            Toast.makeText(requireActivity(), "The photo has been added", Toast.LENGTH_SHORT).show()
+        }
+
+        NotificationUtils(requireActivity()).scheduleNotification()
+
+        resetForm()
+
 
     }
 
@@ -250,6 +250,9 @@ class AddPhotoFragment : Fragment() {
     private fun resetForm() {
         titleInput.setText("")
         descriptionInput.setText("")
+        uri = null
+        imagePreview.setImageURI(null)
+        addButton.setText(R.string.add)
     }
 
 

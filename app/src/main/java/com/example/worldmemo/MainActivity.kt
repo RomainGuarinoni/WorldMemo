@@ -20,6 +20,7 @@ import com.example.worldmemo.broadcast.NetworkReceiver
 import com.example.worldmemo.databinding.ActivityMainBinding
 import com.example.worldmemo.ui.add.AddFragmentDirections
 import com.example.worldmemo.utils.NetworkUtils
+import com.example.worldmemo.utils.NotificationUtils
 import com.example.worldmemo.utils.PermissionUtils
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -54,6 +55,8 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
             )
         )
 
+
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
@@ -76,6 +79,9 @@ class MainActivity : AppCompatActivity(), ImageLoaderFactory {
         networkReceiver.intentFilter.forEach {
             this.registerReceiver(networkReceiver, it)
         }
+
+        // Create notification channel
+        NotificationUtils(this).createNotificationChannel()
 
     }
 
