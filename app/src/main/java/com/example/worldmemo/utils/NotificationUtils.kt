@@ -23,7 +23,7 @@ class NotificationUtils(private val context: Context) {
         "It's been a while that you didn't had something in the app, go find a new audio or image to add !!"
 
 
-    val INTERVAL_MS = 30 * 1000 // 30 secondes
+    private val INTERVAL_MS = 30 * 1000 // 30 secondes
 
     fun createNotificationChannel() {
         val channel = NotificationChannel(

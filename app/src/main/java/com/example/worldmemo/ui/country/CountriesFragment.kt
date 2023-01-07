@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.worldmemo.model.CountryModel
 import com.example.worldmemo.SQLiteHelper
 import com.example.worldmemo.adapter.CountryRecycleAdapter
 import com.example.worldmemo.databinding.FragmentCountriesBinding
+import com.example.worldmemo.model.CountryModel
 
 class CountriesFragment : Fragment() {
 
@@ -19,15 +19,13 @@ class CountriesFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private lateinit var countryList : ArrayList<CountryModel>
-    private lateinit var adapter : CountryRecycleAdapter
+    private lateinit var countryList: ArrayList<CountryModel>
+    private lateinit var adapter: CountryRecycleAdapter
 
-    private lateinit var sqliteHelper:SQLiteHelper
+    private lateinit var sqliteHelper: SQLiteHelper
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
 
         _binding = FragmentCountriesBinding.inflate(inflater, container, false)
@@ -37,9 +35,9 @@ class CountriesFragment : Fragment() {
         val recycleView = binding.countryRecyclerView
         val searchView = binding.searchView
 
-        recycleView.layoutManager = GridLayoutManager(context,2)
+        recycleView.layoutManager = GridLayoutManager(context, 2)
 
-        sqliteHelper= SQLiteHelper(requireActivity())
+        sqliteHelper = SQLiteHelper(requireActivity())
 
         // Remove auto focus of the searchView
         searchView.clearFocus()
@@ -50,7 +48,7 @@ class CountriesFragment : Fragment() {
 
             override fun onQueryTextChange(filter: String?): Boolean {
 
-                //TODO filter country here
+                filteredItems(filter)
                 return true
             }
 
@@ -63,6 +61,25 @@ class CountriesFragment : Fragment() {
         recycleView.adapter = adapter
 
         return root
+    }
+
+    fun filteredItems(filter: String?) {
+
+        if (filter == null) return
+
+        val filterLower = filter.lowercase()
+
+        val filteredCountryList = ArrayList<CountryModel>()
+
+        countryList.forEach {
+            if (it.name.lowercase().contains(filterLower) || it.code.lowercase()
+                    .contains(filterLower)
+            ) {
+                filteredCountryList.add(it)
+            }
+        }
+
+        adapter.setFilteredList(filteredCountryList)
     }
 
     override fun onDestroyView() {

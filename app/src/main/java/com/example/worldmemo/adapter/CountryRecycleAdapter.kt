@@ -16,7 +16,7 @@ import com.example.worldmemo.ui.country.CountriesFragmentDirections
 import com.example.worldmemo.utils.CountriesUtils
 
 class CountryRecycleAdapter(
-    private val country: MutableList<CountryModel>,
+    private var countries: MutableList<CountryModel>,
 ) : RecyclerView.Adapter<CountryRecycleAdapter.CountryViewHolder>() {
 
     private val baseUrl = "https://countryflagsapi.com/png/"
@@ -49,7 +49,7 @@ class CountryRecycleAdapter(
     }
 
     override fun onBindViewHolder(holder: CountryViewHolder, position: Int) {
-        val curCountry = country[position]
+        val curCountry = countries[position]
 
         holder.countryName.text = curCountry.name
 
@@ -58,9 +58,16 @@ class CountryRecycleAdapter(
         }
     }
 
+    fun setFilteredList(filteredList: ArrayList<CountryModel>) {
+
+        countries = filteredList
+
+        notifyDataSetChanged()
+    }
+
 
     override fun getItemCount(): Int {
-        return country.size
+        return countries.size
     }
 
 
