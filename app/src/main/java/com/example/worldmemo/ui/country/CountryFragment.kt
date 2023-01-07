@@ -30,6 +30,7 @@ class CountryFragment : Fragment() {
     private lateinit var photoList: ArrayList<PhotoModel>
     private lateinit var audioAdapter: AudioRecyclerAdapter
     private lateinit var photoAdapter: PhotoRecyclerAdapter
+    private lateinit var tabLayout: TabLayout
     private lateinit var sqliteHelper: SQLiteHelper
     private lateinit var countryName: String
     private val args: CountryFragmentArgs by navArgs()
@@ -37,6 +38,23 @@ class CountryFragment : Fragment() {
     private val AUDIO_TAB = 0
     private val PHOTO_TAB = 1
     private var currentTab = AUDIO_TAB
+    private val CURRENT_TAB_KEY = "current_tab"
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putInt(CURRENT_TAB_KEY, currentTab)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+
+
+        currentTab = savedInstanceState?.getInt(CURRENT_TAB_KEY) ?: currentTab
+
+        tabLayout.getTabAt(currentTab)?.select()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -63,7 +81,7 @@ class CountryFragment : Fragment() {
         val deleteButton = binding.countryDeleteButton
         val shareButton = binding.countryShareButton
         val updateButton = binding.countryUpdateButton
-        val tabLayout = binding.countryTableLayout
+        tabLayout = binding.countryTableLayout
 
         // Remove auto focus of the searchView
         searchView.clearFocus()

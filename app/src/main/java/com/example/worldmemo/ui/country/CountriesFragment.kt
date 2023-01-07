@@ -24,6 +24,8 @@ class CountriesFragment : Fragment() {
 
     private lateinit var sqliteHelper: SQLiteHelper
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {

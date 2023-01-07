@@ -29,16 +29,33 @@ class HomeFragment : Fragment() {
     private lateinit var photoList: ArrayList<PhotoModel>
     private lateinit var audioAdapter: AudioRecyclerAdapter
     private lateinit var photoAdapter: PhotoRecyclerAdapter
+    private lateinit var tabLayout: TabLayout
     private lateinit var sqliteHelper: SQLiteHelper
 
     private val AUDIO_TAB = 0
     private val PHOTO_TAB = 1
     private var currentTab = AUDIO_TAB
+    private val CURRENT_TAB_KEY = "current_tab"
 
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putInt(CURRENT_TAB_KEY, currentTab)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+
+
+        currentTab = savedInstanceState?.getInt(CURRENT_TAB_KEY) ?: currentTab
+
+        tabLayout.getTabAt(currentTab)?.select()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -60,7 +77,7 @@ class HomeFragment : Fragment() {
         val deleteButton = binding.homeDeleteButton
         val shareButton = binding.homeShareButton
         val updateButton = binding.homeUpdateButton
-        val tabLayout = binding.homeTableLayout
+        tabLayout = binding.homeTableLayout
 
         // Remove auto focus of the searchView
         searchView.clearFocus()
@@ -140,10 +157,12 @@ class HomeFragment : Fragment() {
         recycleView.adapter = audioAdapter
 
         if (audioList.size == 0 && photoList.size > 0) {
+
             recycleView.adapter = photoAdapter
             currentTab = PHOTO_TAB
             tabLayout.getTabAt(PHOTO_TAB)?.select()
         }
+
 
         tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
